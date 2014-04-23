@@ -24,46 +24,7 @@
 $dtmz = @date_default_timezone_get();
 @date_default_timezone_set($dtmz?:'Europe/London');
 
-/**
- * @var array   Default settings
- * You can overwrite each entry or all of them defining a `$settings` array
- */
-$default_settings = array(
-    // list of characters replaced by a space when transforming a string
-    'string_spacify' => array('-', '_'),
-    // list of characters striped when transforming a string
-    'string_strip' => array(),
-    // length of introductions or extracts of contents
-    'intro_length' => 80,
-    // date time format mask
-    'date_format' => 'd M Y H:i:s',
-    // mask used for additional meta tags
-    'mask_meta' => '<meta name="%s" content="%s">',
-    // mask used for additional stylesheets
-    'mask_stylesheet' => '<link href="%s" rel="stylesheet">',
-    // mask used for additional scripts
-    'mask_scripts' => '<script src="%s"></script>',
-    // mask used to build global table of contents list
-    'mask_toc_list' => '<ul>%s</ul>',
-    // mask used to build each table of contents list item
-    'mask_toc_list_item' => '<li>%s</li>',
-    // mask used to build the content of each table of contents list item
-    'mask_toc_list_item_content' => '<a href="#%s">%s</a>',
-    // mask used to build global notes list
-    'mask_notes_list' => '<ol>%s</ol>',
-    // mask used to build each notes list item
-    'mask_notes_list_item' => '<li id="%s">%s</li>',
-    // mask used to build the content string of each notes list item
-    'mask_notes_list_item_content' => '%s',
-
-    // jQuery 1.11.0 <http://jquery.com/>
-    'jquery_script' => "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js",
-    // Bootstrap 3.1.1 <http://getbootstrap.com/>
-    'bootstrap_script' => "//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js",
-    'bootstrap_stylesheet' => "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css",
-    // Font Awesome 4.0.3 <http://fortawesome.github.io/Font-Awesome>
-    'icons_stylesheet' => "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css",
-);
+################# USER VARIABLES #######################################################################################
 
 /**
  * @var    string    The page title
@@ -96,7 +57,7 @@ if (!isset($content)) $content = '';
 if (!isset($notes)) $notes = array();
 
 /**
- * @var    string|array    The page secondary contents list or string, you can use a 'meaningfull' index
+ * @var    string|array    The page secondary contents list or string, you can use a 'meaningful' index
  */
 if (!isset($secondary_contents)) $secondary_contents = array();
 if (!is_array($secondary_contents)) $secondary_contents = array( $secondary_contents );
@@ -145,7 +106,7 @@ if (!isset($repo_icon)) $repo_icon = 'fa-github';
 /**
  * @var    string    The header link to the repo title
  */
-if (!isset($repo_title)) $repo_title = 'For the repo on gihub';
+if (!isset($repo_title)) $repo_title = 'Fork the repo on gihub';
 
 /**
  * @var    array    The user settings overwriting the `$default_settings`
@@ -153,24 +114,131 @@ if (!isset($repo_title)) $repo_title = 'For the repo on gihub';
 if (!isset($settings)) $settings = array();
 if (!is_array($settings)) $settings = array( $settings );
 
+################# END OF USER VARIABLES ################################################################################
+
+################# SETTINGS #############################################################################################
+
 /**
- * Prepare the `hqt_settings` env vars
+ * @var array   Default settings
+ * You can overwrite each entry or all of them defining a `$settings` array
+ */
+$hqt_default_settings = array(
+    // list of characters replaced by a space when transforming a string
+    'string_spacify' => array('-', '_'),
+    // list of characters striped when transforming a string
+    'string_strip' => array(),
+    // car. used to build slugs (replacing special cars and spaces)
+    'slug_glue' => '-',
+    // length of introductions or extracts of contents
+    'extract_length' => 180,
+    // date time format mask
+    'date_format' => 'd M Y H:i:s',
+    // mask used for additional meta tags
+    'mask_meta' => '<meta name="%s" content="%s">',
+    // mask used for additional stylesheets
+    'mask_stylesheet' => '<link href="%s" rel="stylesheet">',
+    // mask used for additional scripts
+    'mask_scripts' => '<script src="%s"></script>',
+    // title of the table of contents
+    'toc_title' => 'Table of contents',
+    // mask used to build global table of contents list
+    'mask_toc_list' => '<ul>%s</ul>',
+    // mask used to build each table of contents list item
+    'mask_toc_list_item' => '<li>%s</li>',
+    // mask used to build the content of each table of contents list item
+    'mask_toc_list_item_content' => '<a href="#%s">%s</a>',
+    // title of the content notes
+    'notes_title' => 'Footnotes',
+    // mask used to build global notes list
+    'mask_notes_list' => '<ol>%s</ol>',
+    // mask used to build each notes list item
+    'mask_notes_list_item' => '<li id="%s">%s</li>',
+    // mask used to build the content string of each notes list item
+    'mask_notes_list_item_content' => '%s',
+    // mask used to build author info
+    'mask_author' => 'Content authored by %s.&nbsp;',
+    // mask used to build last update info
+    'mask_update' => 'Last update of this content at %s.&nbsp;',
+    // title of the secondaty contents menu
+    'secondary_blocks_title' => 'Infos',
+
+    // jQuery 1.11.0 <http://jquery.com/>
+    'jquery_script' => "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js",
+    // Bootstrap 3.1.1 <http://getbootstrap.com/>
+    'bootstrap_script' => "//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js",
+    'bootstrap_stylesheet' => "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css",
+    // Font Awesome 4.0.3 <http://fortawesome.github.io/Font-Awesome>
+    'icons_stylesheet' => "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css",
+
+    // footer application information string
+    'app_info' => 'Page generated from an <a href="%s" title="%s">%s</a>.',
+    // footer dependencies information string
+    'dependencies_info' => 'Page built with the help of open source stuff such as <a href="http://jquery.com/" title="jquery.com">jQuery</a>, <a href="http://getbootstrap.com/" title="getbootstrap.com">Bootstrap</a> and <a href="http://fortawesome.github.io/Font-Awesome" title="fortawesome.github.io/Font-Awesome">Font Awesome</a>.'
+
+);
+
+################# END OF SETTINGS ######################################################################################
+
+################# INTERNAL API #########################################################################################
+
+/**
+ * @constant    Name of the app
+ */
+define('HQT_NAME', 'html5-quick-template');
+
+/**
+ * @constant    Current version of the app
+ */
+define('HQT_VERSION', '1.0.0');
+
+/**
+ * @constant    URL of the app repo
+ */
+define('HQT_URL', 'http://github.com/pierowbmstr/html5-quick-template');
+
+/**
+ * Prepare the env vars
  *
  * @param   array   $defaults   The default settings array
  * @param   array   $options    The user settings array
- * @global  array   $hqt_settings
- * @global  string  $hqt_name
- * @global  string  $hqt_url
- * @global  string  $hqt_version
  * @return  void
  */
-function prepare($defaults = array(), $options = array())
+function hqt_prepare($defaults = array(), $options = array())
 {
-    global $hqt_settings, $hqt_name, $hqt_url, $hqt_version;
-    $hqt_settings = array_merge($defaults, $options);
-    $hqt_name = 'html5-quick-template';
-    $hqt_url = 'http://github.com/pierowbmstr/html5-quick-template';
-    $hqt_version = '1.0.0';
+    foreach (array_merge($defaults, $options) as $var=>$val) {
+        hqt_internal($var, $val);
+    }
+    if (!isset($options['app_info']) || (isset($options['app_info']) && $options['app_info']==$defaults['app_info'])) {
+        hqt_internal('app_info', sprintf($defaults['app_info'], HQT_URL, HQT_NAME.' '.HQT_VERSION, HQT_NAME));
+    }
+}
+
+/**
+ * Get a setting entry
+ * 
+ * @param   string  $name   The setting key to get
+ * @return  misc
+ */
+function hqt_setting($name)
+{
+    return hqt_internal($name);
+}
+
+/**
+ * Internal `hqt_settings` setter/getter
+ *
+ * @param   array   $var   The variable name
+ * @param   misc    $val   The variable value to set
+ * @return  misc
+ */
+function hqt_internal($var, $val = null)
+{
+    static $hqt_settings = array();
+    if (!empty($val)) {
+        $hqt_settings[$var]= $val;
+    } else {
+        return isset($hqt_settings[$var]) ? $hqt_settings[$var] : null;
+    }
 }
 
 /**
@@ -181,9 +249,8 @@ function prepare($defaults = array(), $options = array())
  * @param    bool    $readable    Make a readable content or not (default is NOT)
  * @return   string
  */
-function safely($what, $mask = '%s', $readable = false)
+function hqt_safestring($what, $mask = '%s', $readable = false)
 {
-    global $hqt_settings;
     $str = '';
     if (is_array($what)) {
         foreach ($what as $var=>$val) {
@@ -192,17 +259,41 @@ function safely($what, $mask = '%s', $readable = false)
         }
     } elseif (is_object($what)) {
         if ($what instanceof DateTime) {
-            $str .= sprintf($mask, $what->format($hqt_settings['date_format']));
+            $str .= sprintf($mask, $what->format(hqt_setting('date_format')));
         }
-    } elseif (is_string($what)) {
-        $str .= sprintf($mask, $what);
+    } elseif (is_string($what) || is_numeric($what)) {
+        $str .= sprintf($mask, (string) $what);
         if ($readable===true) {
-            $str = str_replace($hqt_settings['string_spacify'], ' ', $str);
-            $str = str_replace($hqt_settings['string_strip'], '', $str);
-            $str = ucfirst($str);
+            $str = ucfirst(hqt_stringify($str));
         }
     }
     return $str; 
+}
+
+/**
+ * Get a readable string from any original string
+ *
+ * @param   string  $str    The original string
+ * @return  string
+ */
+function hqt_stringify($str)
+{
+    $str = str_replace(hqt_setting('string_spacify'), ' ', (string) $str);
+    $str = str_replace(hqt_setting('string_strip'), '', $str);
+    return $str;
+}
+
+/**
+ * Build a slug string (for DOM IDs for instance) from an original string
+ *
+ * @param   string  $str    The original string
+ * @return  string
+ */
+function hqt_slugify($str)
+{
+    $str = preg_replace('~[^a-zA-Z0-9]+~u', hqt_setting('slug_glue'), (string) $str);
+    $str = strtolower(trim($str, hqt_setting('slug_glue')));
+    return $str;
 }
 
 /**
@@ -211,11 +302,10 @@ function safely($what, $mask = '%s', $readable = false)
  * @param    misc    $what        The original content to stringify
  * @return   string
  */
-function intro($what)
+function hqt_extract($what)
 {
-    global $hqt_settings;
-    $str = substr(safely($what), 0, $hqt_settings['intro_length']);
-    return htmlentities(strip_tags($str));
+    $str = substr(hqt_safestring($what), 0, hqt_setting('extract_length'));
+    return htmlentities(trim(strip_tags($str), "\n"));
 }
 
 /**
@@ -224,28 +314,27 @@ function intro($what)
  * @param    array    $toc    The contents array like `id => title` or `id => items` with `items` constructed like `$toc`
  * @return   string
  */
-function make_toc($toc)
+function hqt_make_toc($toc)
 {
-    global $hqt_settings;
     $str = '';
     if (is_array($toc)) {
         foreach ($toc as $var=>$val) { 
             if (!is_string($var) && is_string($val)) { $var = $val; }
             if (is_array($val)) {
                 $str .= sprintf(
-                    $hqt_settings['mask_toc_list_item'], 
-                    sprintf($hqt_settings['mask_toc_list_item_content'], safely($var), safely($var, '%s', true)) . make_toc($val)
+                    hqt_setting('mask_toc_list_item'),
+                    sprintf(hqt_setting('mask_toc_list_item_content'), hqt_safestring($var), hqt_safestring($var, '%s', true)) . hqt_make_toc($val)
                 );
             } else {
                 $str .= sprintf(
-                    $hqt_settings['mask_toc_list_item'], 
-                    sprintf($hqt_settings['mask_toc_list_item_content'], safely($var), safely($val, '%s', true))
+                    hqt_setting('mask_toc_list_item'),
+                    sprintf(hqt_setting('mask_toc_list_item_content'), hqt_safestring($var), hqt_safestring($val, '%s', true))
                 );
             }
         }
-        $str = sprintf($hqt_settings['mask_toc_list'], $str);
+        $str = sprintf(hqt_setting('mask_toc_list'), $str);
     } else {
-        $str = safely($toc);
+        $str = hqt_safestring($toc);
     }
     return $str;
 }
@@ -256,46 +345,55 @@ function make_toc($toc)
  * @param    array    $notes    The notes array like `id => info`
  * @return   string
  */
-function make_notes($notes)
+function hqt_make_notes($notes)
 {
-    global $hqt_settings;
     $str = '';
     if (is_array($notes)) {
         foreach ($notes as $var=>$val) { 
             if (!is_string($var) && is_string($val)) { $var = $val; }
             $str .= sprintf(
-                $hqt_settings['mask_notes_list_item'],
-                safely($var),
-                safely($val, $hqt_settings['mask_notes_list_item_content'], true)
+                hqt_setting('mask_notes_list_item'),
+                hqt_safestring($var),
+                hqt_safestring($val, hqt_setting('mask_notes_list_item_content'), true)
             );
         }
-        $str = sprintf($hqt_settings['mask_notes_list'], $str);
+        $str = sprintf(hqt_setting('mask_notes_list'), $str);
     } else {
-        $str = safely($notes);
+        $str = hqt_safestring($notes);
     }
     return $str;
 }
 
+################# END OF INTERNAL API ##################################################################################
+
+################# FINAL RENDERING ######################################################################################
+
+// env preparation
+hqt_prepare($hqt_default_settings, $settings);
+
 // rendering
-prepare($default_settings, $settings);
+header('Content-Type: text/html');
+if (!empty($update)) {
+    header('Last-Modified: '.(($update instanceof DateTime) ? $update->format('D, d M Y H:i:s T') : date('D, d M Y H:i:s T', $update)));
+}
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="en">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="<?php echo $hqt_settings['bootstrap_stylesheet']; ?>" rel="stylesheet">
-    <link href="<?php echo $hqt_settings['icons_stylesheet']; ?>" rel="stylesheet">
+    <link href="<?php echo hqt_setting('bootstrap_stylesheet'); ?>" rel="stylesheet">
+    <link href="<?php echo hqt_setting('icons_stylesheet'); ?>" rel="stylesheet">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <title><?php echo safely($title); ?></title>
+    <title><?php echo hqt_safestring($title); ?></title>
 <?php if (!empty($sub_title)) : ?>
-    <meta name="description" content="<?php echo safely($sub_title); ?>">
+    <meta name="description" content="<?php echo hqt_safestring($sub_title); ?>">
 <?php endif; ?>
 <?php if (!empty($author)) : ?>
-    <meta name="author" content="<?php echo safely($author); ?>">
+    <meta name="author" content="<?php echo hqt_safestring($author); ?>">
 <?php endif; ?>
     <style>
     body        { padding-top: 70px; }
@@ -320,17 +418,18 @@ prepare($default_settings, $settings);
     input#search        { padding-right: 24px; }
     span#delete-search  { position: absolute; display: block; top: 10px; right: 24px; z-index: 100; cursor: pointer; }
     @media (max-width: 767px) {
-        aside               { max-width: 100%; }
-        aside#secondary-contents { margin: 10px; }
-        .secondary-content       { display: block; min-width: 100%; }
-        span#delete-search  { top: 40px; }
-        .responsive { width: 100%; overflow: auto; }
+        aside                       { max-width: 100%; }
+        aside#secondary-contents    { margin: 10px; }
+        .secondary-content          { display: block; min-width: 100%; }
+        span#delete-search          { top: 40px; }
+        .responsive                 { width: 100%; overflow: auto; }
+        .navbar li a .visible-xs    { display: inline !important; }
     }
     </style>
-<?php echo safely($metas, $hqt_settings['mask_meta']); ?>
-<?php echo safely($stylesheets, $hqt_settings['mask_stylesheet']); ?>
+<?php echo hqt_safestring($metas, hqt_setting('mask_meta')); ?>
+<?php echo hqt_safestring($stylesheets, hqt_setting('mask_stylesheet')); ?>
 <style>
-<?php echo safely($css); ?>
+<?php echo hqt_safestring($css); ?>
 </style>
 </head>
 <body data-offset="70">
@@ -344,32 +443,32 @@ prepare($default_settings, $settings);
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="navigation menu">
                     <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href=""><?php echo safely($title); ?></a>
+                <a class="navbar-brand" href=""><?php echo hqt_safestring($title); ?></a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
 <?php if (!empty($toc)) : ?>
-                    <li><a href="#toc" title="reach the table of contents"><i class="fa fa-angle-left"></i>&nbsp;Table of Contents</a></li>
+                    <li><a href="#toc" title="reach the table of contents"><i class="fa fa-angle-left"></i>&nbsp;<?php echo hqt_safestring(hqt_setting('toc_title')); ?></a></li>
 <?php endif; ?>
 <?php if (!empty($notes)) : ?>
-                    <li><a href="#notes" title="reach the notes of the content"><i class="fa fa-angle-right"></i>&nbsp;Footnotes</a></li>
+                    <li><a href="#notes" title="reach the notes of the content"><i class="fa fa-angle-right"></i>&nbsp;<?php echo hqt_safestring(hqt_setting('notes_title')); ?></a></li>
 <?php endif; ?>
                     <li><a href="#top" title="reach the top of the page"><i class="fa fa-angle-up"></i>&nbsp;Top</a></li>
                     <li><a href="#bottom" title="reach the bottom of the page"><i class="fa fa-angle-down"></i>&nbsp;Bottom</a></li>
 <?php if (!empty($secondary_contents)) : ?>
                     <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Infos <b class="caret"></b></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><?php echo hqt_safestring(hqt_setting('secondary_blocks_title')); ?> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-    <?php foreach ($secondary_contents as $i => $_item) : $id = safely((string) $i); ?>
-                            <li><a href="#secondary-content-<?php echo $id; ?>" title="<?php echo intro($_item); ?>"><?php echo safely($id, '%s', true); ?></a></li>
+    <?php foreach ($secondary_contents as $i => $_item) : $id = hqt_slugify($i); ?>
+                            <li><a href="#secondary-content-<?php echo $id; ?>" title="<?php echo hqt_extract($_item); ?>"><?php echo hqt_stringify($i); ?></a></li>
     <?php endforeach; ?>
                         </ul>
                     </li>
 <?php endif; ?>
-                    <li class="active"><a title="<?php echo safely($repo_title); ?>" href="<?php echo safely($repo_url); ?>">&nbsp;<i class="fa <?php echo safely($repo_icon); ?>"></i>&nbsp;</a></li>
+                    <li class="active"><a title="<?php echo hqt_safestring($repo_title); ?>" href="<?php echo hqt_safestring($repo_url); ?>">&nbsp;<i class="fa <?php echo hqt_safestring($repo_icon); ?>"></i>&nbsp;<span class="visible-xs"><?php echo hqt_safestring($repo_title); ?></span></a></li>
                 </ul>
                 <form class="navbar-form navbar-right" role="search">
                     <span id="result-count" class="text-primary"></span>&nbsp;
@@ -382,12 +481,15 @@ prepare($default_settings, $settings);
     <div id="wrapper" class="wrapper container-fluid">
 <?php if (!empty($secondary_contents)) : ?>
         <aside id="secondary-contents" class="pull-right">
-    <?php foreach ($secondary_contents as $i => $_item) : $id = safely((string) $i); ?>
+    <?php foreach ($secondary_contents as $i => $_item) : $id = hqt_slugify($i); ?>
             <div class="secondary-content bg-default">
-                <p class="text-muted handler"><a data-toggle="collapse" data-parent="#secondary-contents" href="#secondary-content-<?php echo $id; ?>" onClick="$(this).find('i').toggleClass('fa-angle-up').toggleClass('fa-angle-down');" title="show / hide this content block"><i class="fa fa-angle-up"></i>&nbsp;show / hide</a></p>
+                <p class="text-muted handler">
+                    <a data-toggle="collapse" data-parent="#secondary-contents" href="#secondary-content-<?php echo $id; ?>" onClick="$(this).find('i').toggleClass('fa-angle-up').toggleClass('fa-angle-down');" title="show / hide this content block">
+                        <i class="fa fa-angle-up"></i>&nbsp;<?php echo ($id != (string) $i) ? hqt_stringify($i) : 'show / hide'; ?>
+                    </a>
+                </p>
                 <div id="secondary-content-<?php echo $id; ?>" class="collapse in">
-                    <?php if ($id != (string) $i) : ?><h4 id="<?php echo $id; ?>"><?php echo safely($id, '%s', true); ?></h4><?php endif; ?>
-                    <?php echo make_toc($_item); ?>
+                    <?php echo hqt_make_toc($_item); ?>
                 </div>
             </div>
     <?php endforeach; ?>
@@ -396,22 +498,22 @@ prepare($default_settings, $settings);
 <?php endif; ?>
         <article>
             <header>
-                <h1><?php echo safely($title); ?> <small><?php echo safely($sub_title); ?></small></h1>
+                <h1><?php echo hqt_safestring($title); ?> <small><?php echo hqt_safestring($sub_title); ?></small></h1>
             </header>
 <?php if (!empty($toc)) : ?>
             <aside role="navigation" class="bg-info <?php echo (!empty($secondary_contents)) ? 'pull-left' : 'pull-right'; ?> hidden-print">
-                <h4 id="toc">Table of contents</h4>
-                <?php echo make_toc($toc); ?>
+                <h4 id="toc"><?php echo hqt_safestring(hqt_setting('toc_title')); ?></h4>
+                <?php echo hqt_make_toc($toc); ?>
             </aside>
             <div class="clearfix visible-xs"></div>
 <?php endif; ?>
-            <?php echo safely($content); ?>
+            <?php echo hqt_safestring($content); ?>
 <?php if (!empty($notes)) : ?>
             <hr />
             <footer>
                 <div class="footnotes">
-                    <h4 id="notes">Notes</h4>
-                    <?php echo make_notes($notes); ?>
+                    <h4 id="notes"><?php echo hqt_safestring(hqt_setting('notes_title')); ?></h4>
+                    <?php echo hqt_make_notes($notes); ?>
                 </div>
             </footer>
 <?php endif; ?>
@@ -419,10 +521,13 @@ prepare($default_settings, $settings);
             <hr />
             <footer class="text-right text-muted"><small><p>
     <?php if (!empty($author)) : ?>
-                Content authored by <?php echo safely($author); ?>.&nbsp;
+                <?php echo hqt_safestring($author, hqt_setting('mask_author')); ?>
+    <?php endif; ?>
+    <?php if (!empty($author) && !empty($update)) : ?>
+        <br class="visible-xs">
     <?php endif; ?>
     <?php if (!empty($update)) : ?>
-                Last update of this content at <?php echo safely($update); ?>.&nbsp;
+        <?php echo hqt_safestring($update, hqt_setting('mask_update')); ?>
     <?php endif; ?>
             </p></small></footer>
 <?php endif; ?>
@@ -430,19 +535,14 @@ prepare($default_settings, $settings);
         <footer>
             <div class="footer">
                 <div class="pull-right text-right"><small>
-                    Page generated from an <a href="<?php echo safely($hqt_url); ?>" title="<?php echo safely($hqt_name); ?> <?php echo safely($hqt_version); ?>"><?php echo safely($hqt_name); ?></a>.
-                    <br>
-                    Page built with the help of open source stuff such as 
-                    <a href="http://jquery.com/" title="jquery.com">jQuery</a>, 
-                    <a href="http://getbootstrap.com/" title="getbootstrap.com">Bootstrap</a> and 
-                    <a href="http://fortawesome.github.io/Font-Awesome" title="fortawesome.github.io/Font-Awesome">Font Awesome</a>.
+                    <?php echo hqt_setting('app_info'); ?><br><?php echo hqt_setting('dependencies_info'); ?>
                 </small></div>
                 <div class="pull-left responsive"><small>
-                    <span class="label label-default"><?php echo date($hqt_settings['date_format']); ?></span>
+                    <span class="label label-default" title="date of the page"><?php echo date(hqt_setting('date_format')); ?></span>
                     <br>
-                    <span class="label label-default" id="user-agent"></span>
+                    <span class="label label-default" id="user-agent" title="current user agent"></span>
                     <br>
-                    <span class="label label-default"><?php echo php_uname(); ?></span>
+                    <span class="label label-default" title="server system"><?php echo php_uname(); ?></span>
                 </small></div>
                 <div class="clearfix"></div>
             </div>
@@ -450,8 +550,8 @@ prepare($default_settings, $settings);
     </div>
     <div class="clearfix"></div>
     <a id="bottom"></a>
-    <script src="<?php echo $hqt_settings['jquery_script']; ?>"></script>
-    <script src="<?php echo $hqt_settings['bootstrap_script']; ?>"></script>
+    <script src="<?php echo hqt_setting('jquery_script'); ?>"></script>
+    <script src="<?php echo hqt_setting('bootstrap_script'); ?>"></script>
     <script>
 /*
 highlight v4 - Highlights arbitrary terms - MIT license - Johann Burkard
@@ -466,6 +566,21 @@ $(function() {
         $("#wrapper").removeHighlight();
         $("#result-count").text("");
     }
+    function scrollAnchor(href) {
+        href = typeof(href) == "string" ? href : $(this).attr("href");
+        if (!href) return;
+        if (href.charAt(0) == "#") {
+            var $target = $(href);
+            if ($target.length) {
+                $('html, body').animate({ scrollTop: $target.offset().top - 70 });
+                if(history && "pushState" in history) {
+                    history.pushState({}, document.title, window.location.pathname + href);
+                    return false;
+                }
+            }
+        }
+    }
+    $("body").on("click", "a", scrollAnchor);
     $("#user-agent").html(navigator.userAgent);
     $("#delete-search").click(function() { clearSearchField(); });
     $(document).keyup(function(e) { if (e.keyCode == 27) { clearSearchField(); } });
@@ -494,9 +609,9 @@ $(function() {
     });
 });
     </script>
-<?php echo safely($scripts, $hqt_settings['mask_scripts']); ?>
+<?php echo hqt_safestring($scripts, hqt_setting('mask_scripts')); ?>
 <script>
-<?php echo safely($js); ?>
+<?php echo hqt_safestring($js); ?>
 </script>
 </body>
 </html>

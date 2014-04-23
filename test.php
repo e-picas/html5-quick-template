@@ -116,19 +116,19 @@ eot;
 
 // page table of contents
 $toc = array(
-	'title-1' => 'Title 1',
-	'title-2' => array(
-		'title-2-1' => 'Title 2.1',
-		'title-2-2' => 'Title 2.2',
-		'title-2-3'
-	),
-	'title-3'
+    'title-1' => 'Title 1',
+    'title-2' => array(
+        'title-2-1' => 'Title 2.1',
+        'title-2-2' => 'Title 2.2',
+        'title-2-3'
+    ),
+    'title-3'
 );
 
 // content notes
 $notes = array(
-	'note-1' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-	'note-2' => 'Proin pulvinar dolor sit amet dui lacinia fringilla. Etiam ut iaculis risus. Sed volutpat mi eu dictum fermentum. Nunc nec tempor metus. Pellentesque eleifend risus quis volutpat consequat. Quisque pharetra, eros at hendrerit fermentum, lectus leo tincidunt justo, eu porta felis mi ut arcu. In sagittis congue neque, sit amet blandit diam convallis quis. Aenean varius nunc eget metus suscipit rutrum. Pellentesque condimentum, nibh ac vulputate lacinia, augue nibh tristique ante, sed scelerisque magna tortor nec arcu. Etiam quis feugiat urna, quis hendrerit libero. Aliquam non dignissim elit. Maecenas non aliquam nibh. Donec tincidunt, libero vel luctus mattis, ipsum dui malesuada magna, vel scelerisque arcu nulla id lacus. Fusce aliquet, dolor non suscipit bibendum, metus nisl tincidunt lectus, ut egestas magna dolor a ligula.',
+    'note-1' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    'note-2' => 'Proin pulvinar dolor sit amet dui lacinia fringilla. Etiam ut iaculis risus. Sed volutpat mi eu dictum fermentum. Nunc nec tempor metus. Pellentesque eleifend risus quis volutpat consequat. Quisque pharetra, eros at hendrerit fermentum, lectus leo tincidunt justo, eu porta felis mi ut arcu. In sagittis congue neque, sit amet blandit diam convallis quis. Aenean varius nunc eget metus suscipit rutrum. Pellentesque condimentum, nibh ac vulputate lacinia, augue nibh tristique ante, sed scelerisque magna tortor nec arcu. Etiam quis feugiat urna, quis hendrerit libero. Aliquam non dignissim elit. Maecenas non aliquam nibh. Donec tincidunt, libero vel luctus mattis, ipsum dui malesuada magna, vel scelerisque arcu nulla id lacus. Fusce aliquet, dolor non suscipit bibendum, metus nisl tincidunt lectus, ut egestas magna dolor a ligula.',
 );
 
 // page secondaty content
@@ -148,7 +148,7 @@ $secondary_contents = array(
 
 // additional header meta tags
 $metas = array(
-	'robots' => 'none'
+    'robots' => 'none'
 );
 
 // additional stylesheets

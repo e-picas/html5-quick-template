@@ -3,14 +3,13 @@ html5-quick-template
 
 A simple blank HTML5 template for quick rendering.
 
-## Basic usage
+## Usage
+
+### Basic usage
 
 To use the template file, just define some simple variables and include the template:
 
     <?php
-
-    // template file path
-    $html5_quick_template = ;
 
     // page title
     $title = 'Test title';
@@ -31,7 +30,7 @@ Please see the source of the `test.php` file for a full example. The complete li
 to be (eventually) defined can be found in the first part of the `html5-quick-template.html.php`
 source file.
 
-## Advanced usage
+### Advanced usage
 
 You can overwrite the internal settings defining a `$settings` array in your script, with
 all default settings entries or part of them. Please see the `$default_settings` array in
