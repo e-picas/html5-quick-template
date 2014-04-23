@@ -33,7 +33,7 @@ source file.
 ### Advanced usage
 
 You can overwrite the internal settings defining a `$settings` array in your script, with
-all default settings entries or part of them. Please see the `$default_settings` array in
+all default settings entries or part of them. Please see the `$hqt_default_settings` array in
 the `html5-quick-template.html.php` source file for a full list.
 
 ## Key features
