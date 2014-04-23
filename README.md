@@ -27,14 +27,14 @@ To use the template file, just define some simple variables and include the temp
     ?>
 
 Please see the source of the `test.php` file for a full example. The complete list of variables
-to be (eventually) defined can be found in the first part of the `html5-quick-template.html.php`
+to be (eventually) defined can be found in the `USER VARIABLES` part of the `html5-quick-template.html.php`
 source file.
 
 ### Advanced usage
 
 You can overwrite the internal settings defining a `$settings` array in your script, with
-all default settings entries or part of them. Please see the `$hqt_default_settings` array in
-the `html5-quick-template.html.php` source file for a full list.
+all default settings entries or part of them. Please see the `SETTINGS` part in the `html5-quick-template.html.php`
+source file for a full list.
 
 ## Key features
 
@@ -48,5 +48,7 @@ the `html5-quick-template.html.php` source file for a full list.
 
 ## Author & infos
 
-This (*small*) work is authored by [Piero Wbmstr](http://github.com/pierowbmstr) and licensed
-under an [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
+This (*small*) work is authored and maintained by [@pierowbmstr](http://github.com/pierowbmstr)
+and licensed under an [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html). To
+propose modifications or tell about a bug, please create a ticket or a fork of the sources
+repository at <http://github.com/pierowbmstr/html5-quick-template>.

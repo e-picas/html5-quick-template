@@ -1,8 +1,8 @@
 <?php
 /**
  * HTML5 Quick Template - A simple blank HTML5 template for quick rendering
- * <http://github.com/pierowbmstr/html5-quick-template>
- * Copyright 2014 PieroWbmstr <http://github.com/pierowbmstr>
+ * Sources at <http://github.com/pierowbmstr/html5-quick-template>
+ * Copyright 2014 @pierowbmstr <http://github.com/pierowbmstr>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ if (!isset($update)) $update = null;
 /**
  * @var    string    The page content
  */
-if (!isset($content)) $content = '';
+if (!isset($content)) $content = 'No content received!';
 
 /**
  * @var    string|array    The page content footnotes like `id => note content` or as a raw string
@@ -575,7 +575,6 @@ $(function() {
                 $('html, body').animate({ scrollTop: $target.offset().top - 70 });
                 if(history && "pushState" in history) {
                     history.pushState({}, document.title, window.location.pathname + href);
-                    return false;
                 }
             }
         }

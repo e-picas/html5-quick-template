@@ -19,7 +19,7 @@ $sub_title = 'A lorem ipsum fake content ...';
 $update = new DateTime('yesterday');
 
 // page author
-$author = 'PieroWbmstr <http://github.com/pierowbmstr>';
+$author = '@pierowbmstr <http://github.com/pierowbmstr>';
 
 // page content
 $content = <<<eot
