@@ -96,7 +96,7 @@ if (!isset($js)) $js = '';
 /**
  * @var    string    The header link to the repo
  */
-if (!isset($repo_url)) $repo_url = 'http://github.com/atelierspierrot/html5-quick-template';
+if (!isset($repo_url)) $repo_url = 'http://github.com/pierowbmstr/html5-quick-template';
 
 /**
  * @var    string    The header link to the repo icon (see <http://fortawesome.github.io/Font-Awesome/icons/#brand>)
@@ -235,7 +235,7 @@ function hqt_internal($var, $val = null)
 {
     static $hqt_settings = array();
     if (!empty($val)) {
-        $hqt_settings[$var]= $val;
+        $hqt_settings[$var] = $val;
     } else {
         return isset($hqt_settings[$var]) ? $hqt_settings[$var] : null;
     }

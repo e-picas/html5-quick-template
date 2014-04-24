@@ -3,6 +3,21 @@ html5-quick-template
 
 A simple blank HTML5 template for quick rendering.
 
+>   Have you ever wanted to quickly test a content with a more fun rendering than the default
+    one of your browser? This template single-file and easy-to-use is just what you need!
+
+## Key features
+
+-   template built with [Bootstrap](http://getbootstrap.com/), [jQuery](http://jquery.com/)
+    and [Font Awesome](http://fortawesome.github.io/Font-Awesome)
+-   inclusion of libraries from a CDN (no local requirements)
+-   default Bootstrap layout: fixed navbar on top and responsive page
+-   printers friendly
+-   search in page with highlight and count of results (3 cars. min)
+-   use `TAB` key to select search field and `ESC` key to clear current search
+
+![Alt text](screen-copy.jpg "Screen sample rendering of the test.php file")
+
 ## Usage
 
 ### Basic usage
@@ -36,22 +51,12 @@ You can overwrite the internal settings defining a `$settings` array in your scr
 all default settings entries or part of them. Please see the `SETTINGS` part in the `html5-quick-template.html.php`
 source file for a full list.
 
+### Documentation
+
 You can visualize both lists of definable variables and default settings when browsing the
 `html5-quick-template.html.php` file directly.
 
-## Key features
-
--   template built with [Bootstrap](http://getbootstrap.com/), [jQuery](http://jquery.com/)
-    and [Font Awesome](http://fortawesome.github.io/Font-Awesome)
--   inclusion of libraries from a CDN (no local requirements)
--   default Bootstrap layout: fixed navbar on top and responsive page
--   printers friendly
--   search in page with highlight and count of results (3 cars. min)
--   use `TAB` key to select search field and `ESC` key to clear current search
-
-![Alt text](screen-copy.jpg "Screen sample rendering of the test.php file")
-
-## Author & infos
+## Author, license & contributions
 
 This (*small*) work is authored and maintained by [@pierowbmstr](http://github.com/pierowbmstr)
 and licensed under an [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html). To
