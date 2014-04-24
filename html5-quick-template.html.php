@@ -161,6 +161,8 @@ $hqt_default_settings = array(
     'mask_update' => 'Last update of this content at %s.&nbsp;',
     // title of the secondaty contents menu
     'secondary_blocks_title' => 'Infos',
+    // brand icon (here as an array with a random selection for each rendering ;)
+    'brand_icon' => array( '<i class="fa fa-umbrella"></i>', '<i class="fa fa-anchor"></i>', '<i class="fa fa-beer"></i>', '<i class="fa fa-cloud"></i>', '<i class="fa fa-bug"></i>', '<i class="fa fa-leaf"></i>' ),
 
     // jQuery 1.11.0 <http://jquery.com/>
     'jquery_script' => "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js",
@@ -429,6 +431,7 @@ if (!empty($update)) {
     .highlight  { background : #ff0; }
     .bg-info    { background-color: #D9EDF7; }
     .bg-default { background-color: #f5f5f5; }
+    .navbar-brand i     { font-size: 22px; }
     form.navbar-form    { position: relative; }
     .navbar-form.navbar-right:last-child { margin-right: 0px; }
     input#search        { padding-right: 24px; }
@@ -462,15 +465,20 @@ if (!empty($update)) {
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="navigation menu">
                     <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href=""><?php echo hqt_safestring($title); ?></a>
+                <a class="navbar-brand" href="<?php echo isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : ''); ?>">
+                    <?php $icon = hqt_setting('brand_icon'); if (!empty($icon)) : ?>
+                        <?php echo is_array($icon) ? $icon[array_rand($icon)] : $icon;?>&nbsp;
+                    <?php endif; ?>
+                    <?php echo hqt_safestring($title); ?>
+                </a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
 <?php if (!empty($toc)) : ?>
-                    <li><a href="#toc" title="reach the table of contents"><i class="fa fa-angle-left"></i>&nbsp;<?php echo hqt_safestring(hqt_setting('toc_title')); ?></a></li>
+                    <li><a href="#toc" title="reach the table of contents"><i class="fa fa-book"></i>&nbsp;<?php echo hqt_safestring(hqt_setting('toc_title')); ?></a></li>
 <?php endif; ?>
 <?php if (!empty($notes)) : ?>
-                    <li><a href="#notes" title="reach the notes of the content"><i class="fa fa-angle-right"></i>&nbsp;<?php echo hqt_safestring(hqt_setting('notes_title')); ?></a></li>
+                    <li><a href="#notes" title="reach the notes of the content"><i class="fa fa-thumb-tack"></i>&nbsp;<?php echo hqt_safestring(hqt_setting('notes_title')); ?></a></li>
 <?php endif; ?>
                     <li><a href="#top" title="reach the top of the page"><i class="fa fa-angle-up"></i>&nbsp;Top</a></li>
                     <li><a href="#bottom" title="reach the bottom of the page"><i class="fa fa-angle-down"></i>&nbsp;Bottom</a></li>
@@ -479,7 +487,7 @@ if (!empty($update)) {
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#"><?php echo hqt_safestring(hqt_setting('secondary_blocks_title')); ?> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
     <?php foreach ($secondary_contents as $i => $_item) : $id = hqt_slugify($i); ?>
-                            <li><a href="#secondary-content-<?php echo $id; ?>" title="<?php echo hqt_extract($_item); ?>"><?php echo hqt_stringify($i); ?></a></li>
+                            <li><a href="#secondary-content-<?php echo $id; ?>" title="<?php echo hqt_extract($_item); ?>"><i class="fa fa-chevron-right"></i>&nbsp;<?php echo hqt_stringify($i); ?></a></li>
     <?php endforeach; ?>
                         </ul>
                     </li>

@@ -166,6 +166,7 @@ $js = '';
 /*
 $settings = array();
 $settings['date_format'] = 'D-M-Y';
+$settings['brand_icon'] = '<i class="fa fa-html5"></i>';
 */
 
 require $html5_quick_template;
