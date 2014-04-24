@@ -371,6 +371,22 @@ function hqt_make_notes($notes)
 // env preparation
 hqt_prepare($hqt_default_settings, $settings);
 
+// dump env vars when calling this file 
+if (basename($_SERVER['PHP_SELF'])==basename(__FILE__)) {
+    ob_start();
+    echo "<h2>Defined variables</h2><pre>";
+    $vars = get_defined_vars();
+    foreach (array('GLOBALS', '_POST', '_GET', '_COOKIE', '_FILES', '_ENV', '_REQUEST', '_SERVER', 'php_errormsg', 'dtmz', 'hqt_default_settings') as $key) { if (isset($vars[$key])) unset($vars[$key]); }
+    var_dump($vars);
+    echo "</pre><h2>Default settings</h2><pre>";
+    var_dump($hqt_default_settings);
+    echo "</pre>";
+    $content = ob_get_contents();
+    ob_end_clean();
+    $title = HQT_NAME.' '.HQT_VERSION;
+    $sub_title = 'internal debug';
+}
+
 // rendering
 header('Content-Type: text/html');
 if (!empty($update)) {

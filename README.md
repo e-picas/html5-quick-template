@@ -36,6 +36,9 @@ You can overwrite the internal settings defining a `$settings` array in your scr
 all default settings entries or part of them. Please see the `SETTINGS` part in the `html5-quick-template.html.php`
 source file for a full list.
 
+You can visualize both lists of definable variables and default settings when browsing the
+`html5-quick-template.html.php` file directly.
+
 ## Key features
 
 -   template built with [Bootstrap](http://getbootstrap.com/), [jQuery](http://jquery.com/)
@@ -45,6 +48,8 @@ source file for a full list.
 -   printers friendly
 -   search in page with highlight and count of results (3 cars. min)
 -   use `TAB` key to select search field and `ESC` key to clear current search
+
+![Alt text](screen-copy.jpg "Screen sample rendering of the test.php file")
 
 ## Author & infos
 
