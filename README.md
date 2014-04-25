@@ -4,7 +4,7 @@ html5-quick-template
 A simple blank HTML5 template for quick rendering.
 
 >   Have you ever wanted to quickly test a content with a more fun rendering than the default
-    one of your browser? This template single-file and easy-to-use is just what you need!
+    one of your browser? This single-file and easy-to-use template is just what you need!
 
 ## Key features
 

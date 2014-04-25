@@ -161,6 +161,8 @@ $hqt_default_settings = array(
     'mask_update' => 'Last update of this content at %s.&nbsp;',
     // title of the secondaty contents menu
     'secondary_blocks_title' => 'Infos',
+    // build the brand title from the page title
+    'brand_title' => $title,
     // brand icon (here as an array with a random selection for each rendering ;)
     'brand_icon' => array( '<i class="fa fa-umbrella"></i>', '<i class="fa fa-anchor"></i>', '<i class="fa fa-beer"></i>', '<i class="fa fa-cloud"></i>', '<i class="fa fa-bug"></i>', '<i class="fa fa-leaf"></i>' ),
 
@@ -191,7 +193,7 @@ define('HQT_NAME', 'html5-quick-template');
 /**
  * @constant    Current version of the app
  */
-define('HQT_VERSION', '1.0.0');
+define('HQT_VERSION', '1.0.1');
 
 /**
  * @constant    URL of the app repo
@@ -244,14 +246,35 @@ function hqt_internal($var, $val = null)
 }
 
 /**
+ * Apply one or more callbacks on a string
+ *
+ * @param   string|array    $callback   One or more callback functions to call
+ * @param   string          $str        The single `$str` argument passed to callback(s)
+ * @return  string
+ */
+function hqt_callback($callback, $str)
+{
+    if (empty($callback)) return $str;
+    if (!is_array($callback)) $callback = array( $callback );
+    foreach ($callback as $_cb) {
+        if (!is_null($_cb) && is_callable($_cb)) {
+            $oldstr = $str;
+            try { $str = call_user_func($_cb, $str); } catch (Exception $e) { $str = $oldstr; }
+        }
+    }
+    return $str;
+}
+
+/**
  * Returns a safe string passing it in `$mask` with `sprintf()` and transforming it if `$transform===true`
  * 
- * @param    misc    $what        The original content to stringify
- * @param    string  $mask        The mask to use to build the content
- * @param    bool    $readable    Make a readable content or not (default is NOT)
+ * @param    misc           $what        The original content to stringify
+ * @param    string         $mask        The mask to use to build the content
+ * @param    null|callable  $callback    A callback method to finally transform the string
+ * @setting  date_format                 String used to formate DateTime objects
  * @return   string
  */
-function hqt_safestring($what, $mask = '%s', $readable = false)
+function hqt_safestring($what, $mask = '%s', $callback = null)
 {
     $str = '';
     if (is_array($what)) {
@@ -265,55 +288,67 @@ function hqt_safestring($what, $mask = '%s', $readable = false)
         }
     } elseif (is_string($what) || is_numeric($what)) {
         $str .= sprintf($mask, (string) $what);
-        if ($readable===true) {
-            $str = ucfirst(hqt_stringify($str));
-        }
     }
+    $str = hqt_callback($callback, $str);
     return $str; 
 }
 
 /**
  * Get a readable string from any original string
  *
- * @param   string  $str    The original string
+ * @param   string          $str        The original string
+ * @param   null|callable   $callback   A callback method to finally transform the string
+ * @setting string_spacify              Car(s). replaced by a space
+ * @setting string_strip                Car(s). stripped
  * @return  string
  */
-function hqt_stringify($str)
+function hqt_stringify($str, $callback = null)
 {
     $str = str_replace(hqt_setting('string_spacify'), ' ', (string) $str);
     $str = str_replace(hqt_setting('string_strip'), '', $str);
+    $str = hqt_callback($callback, $str);
     return $str;
 }
 
 /**
  * Build a slug string (for DOM IDs for instance) from an original string
  *
- * @param   string  $str    The original string
+ * @param   string          $str        The original string
+ * @param   null|callable   $callback   A callback method to finally transform the string
+ * @setting slug_glue                   Car. used to replace unwanted cars.
  * @return  string
  */
-function hqt_slugify($str)
+function hqt_slugify($str, $callback = null)
 {
     $str = preg_replace('~[^a-zA-Z0-9]+~u', hqt_setting('slug_glue'), (string) $str);
     $str = strtolower(trim($str, hqt_setting('slug_glue')));
+    $str = hqt_callback($callback, $str);
     return $str;
 }
 
 /**
- * Returns a safe string extracted from original
+ * Returns a safe string extracted from original with legnth `settings[ extract_length ]`
  * 
- * @param    misc    $what        The original content to stringify
+ * @param    misc           $what       The original content to extract
+ * @param   null|callable   $callback   A callback method to finally transform the string
+ * @setting  extract_length             Length of the extracted string
  * @return   string
  */
-function hqt_extract($what)
+function hqt_extract($what, $callback = null)
 {
     $str = substr(hqt_safestring($what), 0, hqt_setting('extract_length'));
-    return htmlentities(trim(strip_tags($str), "\n"));
+    $str = htmlentities(trim(strip_tags($str), "\n"));
+    $str = hqt_callback($callback, $str);
+    return $str;
 }
 
 /**
  * Build a table of contents from an array of items
  * 
  * @param    array    $toc    The contents array like `id => title` or `id => items` with `items` constructed like `$toc`
+ * @setting  mask_toc_list
+ * @setting  mask_toc_list_item
+ * @setting  mask_toc_list_item_content
  * @return   string
  */
 function hqt_make_toc($toc)
@@ -325,12 +360,12 @@ function hqt_make_toc($toc)
             if (is_array($val)) {
                 $str .= sprintf(
                     hqt_setting('mask_toc_list_item'),
-                    sprintf(hqt_setting('mask_toc_list_item_content'), hqt_safestring($var), hqt_safestring($var, '%s', true)) . hqt_make_toc($val)
+                    sprintf(hqt_setting('mask_toc_list_item_content'), hqt_safestring($var), hqt_safestring($var, '%s', array('hqt_stringify','ucfirst'))) . hqt_make_toc($val)
                 );
             } else {
                 $str .= sprintf(
                     hqt_setting('mask_toc_list_item'),
-                    sprintf(hqt_setting('mask_toc_list_item_content'), hqt_safestring($var), hqt_safestring($val, '%s', true))
+                    sprintf(hqt_setting('mask_toc_list_item_content'), hqt_safestring($var), hqt_safestring($val, '%s', array('hqt_stringify','ucfirst')))
                 );
             }
         }
@@ -345,6 +380,9 @@ function hqt_make_toc($toc)
  * Build a list of notes from an array of items
  * 
  * @param    array    $notes    The notes array like `id => info`
+ * @setting  mask_notes_list
+ * @setting  mask_notes_list_item
+ * @setting  mask_notes_list_item_content
  * @return   string
  */
 function hqt_make_notes($notes)
@@ -356,7 +394,7 @@ function hqt_make_notes($notes)
             $str .= sprintf(
                 hqt_setting('mask_notes_list_item'),
                 hqt_safestring($var),
-                hqt_safestring($val, hqt_setting('mask_notes_list_item_content'), true)
+                hqt_safestring($val, hqt_setting('mask_notes_list_item_content'), array('hqt_stringify'))
             );
         }
         $str = sprintf(hqt_setting('mask_notes_list'), $str);
@@ -376,6 +414,7 @@ hqt_prepare($hqt_default_settings, $settings);
 // dump env vars when calling this file 
 if (basename($_SERVER['PHP_SELF'])==basename(__FILE__)) {
     ob_start();
+    echo '<p class="lead">To follow updates and bugs, please have a look at <a href="'.HQT_URL.'">'.HQT_URL.'</a>.</p>';
     echo "<h2>Defined variables</h2><pre>";
     $vars = get_defined_vars();
     foreach (array('GLOBALS', '_POST', '_GET', '_COOKIE', '_FILES', '_ENV', '_REQUEST', '_SERVER', 'php_errormsg', 'dtmz', 'hqt_default_settings') as $key) { if (isset($vars[$key])) unset($vars[$key]); }
@@ -386,14 +425,18 @@ if (basename($_SERVER['PHP_SELF'])==basename(__FILE__)) {
     $content = ob_get_contents();
     ob_end_clean();
     $title = HQT_NAME.' '.HQT_VERSION;
-    $sub_title = 'internal debug';
+    $sub_title = 'internal documentation';
+    hqt_internal('brand_title', hqt_stringify(HQT_NAME, 'ucwords'));
+    hqt_internal('brand_icon', '<i class="fa fa-code"></i>');
 }
 
-// rendering
+// headers
 header('Content-Type: text/html');
 if (!empty($update)) {
     header('Last-Modified: '.(($update instanceof DateTime) ? $update->format('D, d M Y H:i:s T') : date('D, d M Y H:i:s T', $update)));
 }
+
+// rendering
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -406,7 +449,7 @@ if (!empty($update)) {
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <title><?php echo hqt_safestring($title); ?></title>
+    <title><?php echo hqt_safestring(hqt_setting('brand_title')); ?></title>
 <?php if (!empty($sub_title)) : ?>
     <meta name="description" content="<?php echo hqt_safestring($sub_title); ?>">
 <?php endif; ?>
@@ -469,7 +512,7 @@ if (!empty($update)) {
                     <?php $icon = hqt_setting('brand_icon'); if (!empty($icon)) : ?>
                         <?php echo is_array($icon) ? $icon[array_rand($icon)] : $icon;?>&nbsp;
                     <?php endif; ?>
-                    <?php echo hqt_safestring($title); ?>
+                    <?php echo hqt_safestring(hqt_setting('brand_title')); ?>
                 </a>
             </div>
             <div class="navbar-collapse collapse">
