@@ -221,7 +221,7 @@ function hqt_prepare($defaults = array(), $options = array())
  * Get a setting entry
  * 
  * @param   string  $name   The setting key to get
- * @return  misc
+ * @return  mixed
  */
 function hqt_setting($name)
 {
@@ -232,8 +232,8 @@ function hqt_setting($name)
  * Internal `hqt_settings` setter/getter
  *
  * @param   array   $var   The variable name
- * @param   misc    $val   The variable value to set
- * @return  misc
+ * @param   mixed   $val   The variable value to set
+ * @return  mixed
  */
 function hqt_internal($var, $val = null)
 {
@@ -268,7 +268,7 @@ function hqt_callback($callback, $str)
 /**
  * Returns a safe string passing it in `$mask` with `sprintf()` and transforming it if `$transform===true`
  * 
- * @param    misc           $what        The original content to stringify
+ * @param    mixed          $what        The original content to stringify
  * @param    string         $mask        The mask to use to build the content
  * @param    null|callable  $callback    A callback method to finally transform the string
  * @setting  date_format                 String used to formate DateTime objects
@@ -329,8 +329,8 @@ function hqt_slugify($str, $callback = null)
 /**
  * Returns a safe string extracted from original with legnth `settings[ extract_length ]`
  * 
- * @param    misc           $what       The original content to extract
- * @param   null|callable   $callback   A callback method to finally transform the string
+ * @param    mixed           $what       The original content to extract
+ * @param    null|callable   $callback   A callback method to finally transform the string
  * @setting  extract_length             Length of the extracted string
  * @return   string
  */
@@ -414,14 +414,17 @@ hqt_prepare($hqt_default_settings, $settings);
 // dump env vars when calling this file 
 if (basename($_SERVER['PHP_SELF'])==basename(__FILE__)) {
     ob_start();
-    echo '<p class="lead">To follow updates and bugs, please have a look at <a href="'.HQT_URL.'">'.HQT_URL.'</a>.</p>';
-    echo "<h2>Defined variables</h2><pre>";
+    echo '<p class="lead">To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_URL.'" title="See sources on GitHub">'.HQT_URL.'</a>.</p>';
+    echo '<h2>Manuals</h2>';
+    echo '<p>The following manuals may be useful using the template:</p><ul><li><a href="http://www.php.net/docs.php">the PHP manual</a></li><li><a href="http://en.wikipedia.org/wiki/HTML5">an HTML5 presentation</a></li></ul>';
+    echo '<p>Use one of the links below to access the third-party libraries documentations:</p><ul><li><a href="http://api.jquery.com/">jQuery API</a></li><li><a href="http://getbootstrap.com/css/">Bootstrap 3 documentation</a></li><li><a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icons</a></li></ul>';
+    echo '<h2>Definable variables</h2><p>Dump of variables you can define calling the template and their default values.</p><pre>';
     $vars = get_defined_vars();
     foreach (array('GLOBALS', '_POST', '_GET', '_COOKIE', '_FILES', '_ENV', '_REQUEST', '_SERVER', 'php_errormsg', 'dtmz', 'hqt_default_settings') as $key) { if (isset($vars[$key])) unset($vars[$key]); }
     var_dump($vars);
-    echo "</pre><h2>Default settings</h2><pre>";
+    echo '</pre><h2>Default settings</h2><p>Dump of the default template settings you can overwrite in a personal <code>$settings</code> array.</p><pre>';
     var_dump($hqt_default_settings);
-    echo "</pre>";
+    echo '</pre>';
     $content = ob_get_contents();
     ob_end_clean();
     $title = HQT_NAME.' '.HQT_VERSION;
@@ -479,6 +482,9 @@ if (!empty($update)) {
     .navbar-form.navbar-right:last-child { margin-right: 0px; }
     input#search        { padding-right: 24px; }
     span#delete-search  { position: absolute; display: block; top: 10px; right: 24px; z-index: 100; cursor: pointer; }
+    @media (min-width: 768px) and (max-width: 991px) {
+        aside                       { max-width: 40%; }
+    }
     @media (max-width: 767px) {
         aside                       { max-width: 100%; }
         aside#secondary-contents    { margin: 10px; }
@@ -518,13 +524,13 @@ if (!empty($update)) {
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
 <?php if (!empty($toc)) : ?>
-                    <li><a href="#toc" title="reach the table of contents"><i class="fa fa-book"></i>&nbsp;<?php echo hqt_safestring(hqt_setting('toc_title')); ?></a></li>
+                    <li><a href="#toc" title="reach the table of contents"><i class="fa fa-book"></i><span class="hidden-sm">&nbsp;<?php echo hqt_safestring(hqt_setting('toc_title')); ?></span></a></li>
 <?php endif; ?>
 <?php if (!empty($notes)) : ?>
-                    <li><a href="#notes" title="reach the notes of the content"><i class="fa fa-thumb-tack"></i>&nbsp;<?php echo hqt_safestring(hqt_setting('notes_title')); ?></a></li>
+                    <li><a href="#notes" title="reach the notes of the content"><i class="fa fa-thumb-tack"></i><span class="hidden-sm">&nbsp;<?php echo hqt_safestring(hqt_setting('notes_title')); ?></span></a></li>
 <?php endif; ?>
-                    <li><a href="#top" title="reach the top of the page"><i class="fa fa-angle-up"></i>&nbsp;Top</a></li>
-                    <li><a href="#bottom" title="reach the bottom of the page"><i class="fa fa-angle-down"></i>&nbsp;Bottom</a></li>
+                    <li><a href="#top" title="reach the top of the page"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;Top</span></a></li>
+                    <li><a href="#bottom" title="reach the bottom of the page"><i class="fa fa-angle-down"></i><span class="hidden-sm">&nbsp;Bottom</span></a></li>
 <?php if (!empty($secondary_contents)) : ?>
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#"><?php echo hqt_safestring(hqt_setting('secondary_blocks_title')); ?> <b class="caret"></b></a>
