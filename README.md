@@ -20,6 +20,8 @@ A simple blank HTML5 template for quick rendering.
 
 ## Usage
 
+Please note that the template requires a **PHP version 5.3.0** or greater.
+
 ### Basic usage
 
 To use the template file, just define some simple variables and include the template:
