@@ -13,8 +13,9 @@ A simple blank HTML5 template for quick rendering.
 -   inclusion of libraries from a CDN (no local requirements)
 -   default Bootstrap layout: fixed navbar on top and responsive page
 -   printers friendly
--   search in page with highlight and count of results (3 cars. min)
+-   search in page with highlight and count of results (3 chars. min)
 -   use `TAB` key to select search field and `ESC` key to clear current search
+-   query string to process a search on document load with `?search=...`
 
 ![Alt text](screen-copy.jpg "Screen sample rendering of the test.php file")
 
@@ -49,8 +50,8 @@ source file.
 
 ### Advanced usage
 
-You can overwrite the internal settings defining a `$settings` array in your script, with
-all default settings entries or part of them. Please see the `SETTINGS` part in the `html5-quick-template.html.php`
+You can overload internal settings defining a `$settings` array in your script, with all
+default settings entries or part of them. Please see the `SETTINGS` part in the `html5-quick-template.html.php`
 source file for a full list.
 
 ### Documentation

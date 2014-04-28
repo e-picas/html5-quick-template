@@ -1,10 +1,30 @@
 <?php
+/**
+ * This PHP script is a test usage and demonstration page for <http://github.com/pierowbmstr/html5-quick-template>
+ *
+ * To make your tests, (un)comment prepared lines of this script and reload the `test.php` file in your browser.
+ */
 
 // PHP settings not required for template usage
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', 1);
 $dtmz = @date_default_timezone_get();
 @date_default_timezone_set($dtmz?:'Europe/Paris');
+
+// for this test page only, add '?type=css' for a simple stylesheet and '?type=js' for a simple script
+if (!empty($_GET) && isset($_GET['type'])) {
+    if ($_GET['type']=='css') {
+        header('Content-Type: text/css');
+        echo "body { background: #eeeeee; }";
+        exit();
+    } elseif ($_GET['type']=='js') {
+        header('Content-Type: application/javascript');
+        echo "alert('test script');";
+        exit();
+    }
+}
+
+####### DEMO STARTS HERE #################################################################
 
 // template file path
 $html5_quick_template = __DIR__.'/html5-quick-template.html.php';
@@ -113,6 +133,13 @@ vitae congue odio elementum. Nullam hendrerit fringilla porttitor.
 </tbody>
 </table>
 eot;
+// you can also define your content as an array (indexes will be ignored)
+/*
+$content = array(
+    '[1] Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    'test-index' => '[2] Proin pulvinar dolor sit amet dui lacinia fringilla. Etiam ut iaculis risus. Sed volutpat mi eu dictum fermentum. Nunc nec tempor metus. Pellentesque eleifend risus quis volutpat consequat. Quisque pharetra, eros at hendrerit fermentum, lectus leo tincidunt justo, eu porta felis mi ut arcu. In sagittis congue neque, sit amet blandit diam convallis quis. Aenean varius nunc eget metus suscipit rutrum. Pellentesque condimentum, nibh ac vulputate lacinia, augue nibh tristique ante, sed scelerisque magna tortor nec arcu. Etiam quis feugiat urna, quis hendrerit libero. Aliquam non dignissim elit. Maecenas non aliquam nibh. Donec tincidunt, libero vel luctus mattis, ipsum dui malesuada magna, vel scelerisque arcu nulla id lacus. Fusce aliquet, dolor non suscipit bibendum, metus nisl tincidunt lectus, ut egestas magna dolor a ligula.',
+);
+//*/
 
 // page table of contents
 $toc = array(
@@ -130,8 +157,10 @@ $notes = array(
     'note-1' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     'note-2' => 'Proin pulvinar dolor sit amet dui lacinia fringilla. Etiam ut iaculis risus. Sed volutpat mi eu dictum fermentum. Nunc nec tempor metus. Pellentesque eleifend risus quis volutpat consequat. Quisque pharetra, eros at hendrerit fermentum, lectus leo tincidunt justo, eu porta felis mi ut arcu. In sagittis congue neque, sit amet blandit diam convallis quis. Aenean varius nunc eget metus suscipit rutrum. Pellentesque condimentum, nibh ac vulputate lacinia, augue nibh tristique ante, sed scelerisque magna tortor nec arcu. Etiam quis feugiat urna, quis hendrerit libero. Aliquam non dignissim elit. Maecenas non aliquam nibh. Donec tincidunt, libero vel luctus mattis, ipsum dui malesuada magna, vel scelerisque arcu nulla id lacus. Fusce aliquet, dolor non suscipit bibendum, metus nisl tincidunt lectus, ut egestas magna dolor a ligula.',
 );
+// you can also define a simple string
+//$notes = 'One single footnote.';
 
-// page secondaty content
+// page secondary content
 $secondary_contents = array(
     'secondary content title'=>'
 <p>Aenean elementum nulla <abbr title="at blandit sapien hendrerit a">sapien</abbr>, quis cursus risus sodales sed. Sed nec est et enim vulputate pulvinar. Etiam sodales eros quis tincidunt cursus. Mauris consectetur lorem ut sollicitudin tincidunt. Maecenas magna risus, semper nec commodo in, sagittis in neque. Vivamus imperdiet urna at velit convallis semper. Cras eleifend rutrum dui, ut mollis eros euismod ac. Pellentesque molestie felis vel sapien malesuada auctor. Phasellus imperdiet nisl eu mi aliquam commodo. Suspendisse placerat viverra justo, vitae venenatis metus vulputate ut. Sed gravida nibh at lorem posuere, eu dignissim neque varius.</p>
@@ -145,29 +174,56 @@ $secondary_contents = array(
 <p>Pellentesque sagittis, sem mollis viverra tempor, libero lacus euismod risus, <abbr title="at blandit sapien hendrerit a" class="initialism">sit amet facilisis</abbr> nulla metus non magna. Maecenas lectus risus, tincidunt in fringilla non, bibendum vitae ante. Mauris pellentesque mi et leo rutrum vulputate. Mauris sodales pellentesque nibh, quis hendrerit magna dapibus eget. Curabitur in ante arcu. Sed ac mi ligula. Cras commodo pellentesque velit id gravida. Vestibulum eget sem quis magna elementum pulvinar. Nulla vitae magna libero. Nulla sodales massa tristique orci scelerisque volutpat. </p>
     ',
 );
+// you can define a simple string that will be rendered as a single item array
+//$secondary_contents = '<p>Aenean elementum nulla <abbr title="at blandit sapien hendrerit a">sapien</abbr>, quis cursus risus sodales sed. Sed nec est et enim vulputate pulvinar. Etiam sodales eros quis tincidunt cursus. Mauris consectetur lorem ut sollicitudin tincidunt. Maecenas magna risus, semper nec commodo in, sagittis in neque. Vivamus imperdiet urna at velit convallis semper. Cras eleifend rutrum dui, ut mollis eros euismod ac. Pellentesque molestie felis vel sapien malesuada auctor. Phasellus imperdiet nisl eu mi aliquam commodo. Suspendisse placerat viverra justo, vitae venenatis metus vulputate ut. Sed gravida nibh at lorem posuere, eu dignissim neque varius.</p>';
 
 // additional header meta tags
 $metas = array(
     'robots' => 'none'
 );
+// you can also define a simple string
+//$metas = '<meta name="robots" content="none">';
 
 // additional stylesheets
-$stylesheets = array();
+//$stylesheets = array( '?type=css' );
+// you can also define a simple string
+//$stylesheets = '<link href="?type=css" rel="stylesheet">';
 
 // additional scripts
-$scripts = array();
+//$scripts = array( '?type=js' );
+// you can also define a simple string
+//$scripts = '<script src="?type=js"></script>';
 
 // page inline css
-$css = '';
+//$css = 'body { background-color: #eeeeee; }';
 
 // page inline js
-$js = '';
+//$js = 'alert("test inline script");';
 
+// content notice info
+$content_notice = 'This is a notice (short info) about the content.';
+
+// page notice info
+$page_notice = 'Contents are licensed under the <strong>unknown</strong> license.';
+
+// settings overwrites
 /*
 $settings = array();
+$settings['app_mode'] = 'dev';
 $settings['date_format'] = 'D-M-Y';
 $settings['brand_icon'] = '<i class="fa fa-html5"></i>';
-*/
+$settings['navbar_items'] = array('toc', 'top', 'bottom', 'summary');
+//*/
 
+// uncomment this block to test all values setted on `$test_val` below
+/*
+$test_val = null;
+//$test_val = false;
+//$test_val = '';
+$title = $sub_title = $update = $author = $content = $toc = $notes = $secondary_contents = $metas = $stylesheets = $scripts = $css = $js = $content_notice = $page_notice = $test_val;
+//*/
+
+// inclusion of the template
 require $html5_quick_template;
 
+// that's it (the HTML page may already be rendered)
