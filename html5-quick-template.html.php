@@ -165,6 +165,8 @@ if (!isset($settings) || !is_array($settings)) $settings = array();
 $hqt_default_settings = array(
     // @string      app_mode        the application mode ('dev' => show the profiler | 'prod' => clean page)
     'app_mode' => (isset($hqt_app_mode_shortcut) ? $hqt_app_mode_shortcut : 'prod'),
+    // @array       profiler_mode  the actual profiler mode in ( 'on' => profiler, 'off' => no profiler, 'hidden' => profiler hidden in HTML ) 
+    'profiler_mode' => function() { return (hqt_setting('app_mode')==='dev' ? 'on' : 'off'); },
     // @string      language        the page language (used by HTML5)
     'language' => 'en',
     // @string      charset         the page encoding (used by HTML5)
@@ -221,7 +223,7 @@ $hqt_default_settings = array(
     // @string      block_title_toc     title of the table of contents
     'block_title_toc' => 'Table of contents',
     // @string      menu_item_content_toc   table of contents menu item
-    'menu_item_content_toc' => function() use (&$hqt_default_settings) { return $hqt_default_settings['block_title_toc']; },
+    'menu_item_content_toc' => function() { return hqt_setting('block_title_toc'); },
     // @string      mask_list_toc       mask used to build global table of contents list
     'mask_list_toc' => '<ul>%s</ul>',
     // @string      mask_list_item_toc  mask used to build each table of contents list item
@@ -231,7 +233,7 @@ $hqt_default_settings = array(
     // @string      block_title_notes         title of the content notes
     'block_title_notes' => 'Footnotes',
     // @string      menu_item_content_notes     footnotes menu item
-    'menu_item_content_notes' => function() use (&$hqt_default_settings) { return $hqt_default_settings['block_title_notes']; },
+    'menu_item_content_notes' => function() { return hqt_setting('block_title_notes'); },
     // @string      mask_list_notes     mask used to build global notes list
     'mask_list_notes' => '<ol>%s</ol>',
     // @string      mask_list_item_notes     mask used to build each notes list item
@@ -247,12 +249,12 @@ $hqt_default_settings = array(
     // @string      menu_item_content_summary   title of the summary menu item
     'menu_item_content_summary' => 'Summary',
     // @string      menu_item_content_stamp_icon    icon of the "stamp" menu item
-    'menu_item_content_stamp_icon' => function() use (&$hqt_default_settings, &$stamp_icon) {
+    'menu_item_content_stamp_icon' => function() use (&$stamp_icon) {
         return '&nbsp;<i class="fa '.hqt_safestring($stamp_icon).'"></i>&nbsp;';
     },
     // @string      menu_item_content_stamp     content of the "stamp" menu item
-    'menu_item_content_stamp' => function() use (&$hqt_default_settings, &$stamp_url, &$stamp_title) {
-        $icon = hqt_safestring($hqt_default_settings['menu_item_content_stamp_icon']);
+    'menu_item_content_stamp' => function() use (&$stamp_url, &$stamp_title) {
+        $icon = hqt_safestring(hqt_setting('menu_item_content_stamp_icon'));
         return '<a title="'.hqt_safestring($stamp_title).'" href="'.hqt_safestring($stamp_url).'">'.$icon.'<span class="visible-xs">'.hqt_safestring($stamp_title).'</span></a>';
     },
     // @string      brand_title     build the brand title from the page title
@@ -563,6 +565,7 @@ if (!empty($_headers) && is_array($_headers)) {
 }
 
 // rendering
+$hqt_profiler_mode = hqt_safestring(hqt_setting('profiler_mode'));
 ?><!DOCTYPE html>
 <html lang="<?php echo hqt_safestring(hqt_setting('language')); ?>">
 <head>
@@ -798,8 +801,8 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     <?php endif; ?>
                     <?php echo hqt_setting('footer_info_app'); ?><br><?php echo hqt_setting('footer_info_dependencies'); ?>
                 </div>
-<?php if (hqt_setting('app_mode')=='dev') : ?>
-                <div class="pull-left responsive">
+<?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
+                <div id="hqt-profiler" class="pull-left responsive">
                     <div class="clearfix visible-xs"><br /></div>
                     <div class="profiler">
                         <ul class="nav nav-pills">
@@ -832,7 +835,9 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     <script src="<?php echo hqt_setting('libscript_jquery'); ?>" id="lib-jquery"></script>
     <script src="<?php echo hqt_setting('libscript_bootstrap'); ?>" id="lib-bootstrap"></script>
 <script>
-<?php if (hqt_setting('app_mode')=='dev') : ?>
+var _query = document.location.search.substr(1);
+
+<?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
 document.getElementById("profiler-user-agent").innerHTML = navigator.userAgent;
 document.getElementById("profiler-request").innerHTML = document.location.href;
 <?php endif; ?>
@@ -883,13 +888,20 @@ $(function() {
     $("body").removeClass("no-js");
     $("a:not(.no-hash)").on("click", scrollToAnchor);
     $("#main-navbar a:not(.dropdown-toggle)").on("click", closeNavbarMenu);
-<?php if (hqt_setting('app_mode')=='dev') : ?>
+<?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
     $("#profiler-apps").html(
         $("#profiler-apps").html()
         +" | jQuery "+jQuery.fn.jquery
         +" | Bootstrap "+getScriptVersion("lib-bootstrap")
         +" | FontAwesome "+getScriptVersion("lib-fontawesome")
     );
+    var _profilerString = _query.substr(_query.indexOf("profiler=")).split("&")[0].split("=")[1];
+    <?php if ($hqt_profiler_mode=='hidden') : ?>
+    if (_profilerString==undefined || _profilerString!='on') $("#hqt-profiler").hide();
+    <?php endif; ?>
+    <?php if (in_array($hqt_profiler_mode, array('on','hidden'))) : ?>
+    if (_profilerString && _profilerString=='off') $("#hqt-profiler").hide();
+    <?php endif; ?>
 <?php endif; ?>
     $("[data-jqtitle]").each(function(i,el){ $(this).attr("title", $(this).attr("data-jqtitle")); });
     $("#delete-search, #delete-search-alt").click(function() { clearSearchField(); });
@@ -918,10 +930,9 @@ $(function() {
         if (searchField.search) { clearTimeout(searchField.search); }
         searchField.search = setTimeout(searchField.performSearch, 300);
     });
-    var _hash = document.location.search.substr(1),
-        _search = _hash.substr(_hash.indexOf("search=")).split("&")[0].split("=")[1];
-    if (_search) {
-        $("#search-field").val(_search).select().focus();
+    var _searchString = _query.substr(_query.indexOf("search=")).split("&")[0].split("=")[1];
+    if (_searchString) {
+        $("#search-field").val(_searchString).select().focus();
         searchField.performSearch();
     } else {
         searchField.search;
