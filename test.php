@@ -31,15 +31,21 @@ $html5_quick_template = __DIR__.'/html5-quick-template.html.php';
 
 // page title
 $title = 'Test title';
+// you can also define it as an array
+//$title = array('Test', 'title');
 
 // page sub-title
 $sub_title = 'A lorem ipsum fake content ...';
+// you can also define it as an array
+//$sub_title = array('A lorem ipsum', 'fake content ...');
 
 // page last update
 $update = new DateTime('yesterday');
 
 // page author
 $author = '@pierowbmstr (http://github.com/pierowbmstr)';
+// you can also define it as an array
+//$author = array('@pierowbmstr (http://github.com/pierowbmstr)', 'other author');
 
 // page content
 $content = <<<eot
@@ -202,19 +208,25 @@ $metas = array(
 
 // content notice info
 $content_notice = 'This is a notice (short info) about the content.';
+// you can also define it as an array
+//$content_notice = array('This is a notice (short info) about the content.', 'Second notice ...');
 
 // page notice info
 $page_notice = 'Contents are licensed under the <strong>unknown</strong> license.';
+// you can also define it as an array
+//$page_notice = array('Contents are licensed under the <strong>unknown</strong> license.', 'Second notice ...');
 
 // settings overwrites
 /*
 $settings = array();
 $settings['app_mode'] = 'dev';
-//$settings['profiler_mode'] = 'hidden';
+//$settings['profiler_mode'] = 'on';
 //$settings['direction'] = 'rtl';
 $settings['date_format'] = 'D-M-Y';
 $settings['brand_icon'] = '<i class="fa fa-html5"></i>';
 $settings['navbar_items'] = array('toc', 'top', 'bottom', 'summary');
+$settings['language_strings'] = array();
+$settings['language_strings']['notes_block_header'] = 'Content Notes';
 //*/
 
 // uncomment this block to test all values setted on `$test_val` below
