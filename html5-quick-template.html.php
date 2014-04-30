@@ -28,8 +28,8 @@
 //ini_set('html_errors', 0); ini_set('xdebug.overload_var_dump', 0);
 
 // set a default timezone to avoid PHP5 warnings
-$dtmz = @date_default_timezone_get();
-@date_default_timezone_set($dtmz?:'Europe/London');
+$hqt_dtmz = @date_default_timezone_get();
+@date_default_timezone_set($hqt_dtmz?:'Europe/London');
 
 // PHP 5.3 or greater required
 if (version_compare(phpversion(), '5.3.0', '<')) {
@@ -165,12 +165,18 @@ if (!isset($settings) || !is_array($settings)) $settings = array();
 $hqt_default_settings = array(
     // @string      app_mode        the application mode ('dev' => show the profiler | 'prod' => clean page)
     'app_mode' => (isset($hqt_app_mode_shortcut) ? $hqt_app_mode_shortcut : 'prod'),
+    // @string      profiler_default_mode   the default profiler mode for 'prod' `app_mode`
+    'profiler_default_mode' => 'hidden',
     // @array       profiler_mode  the actual profiler mode in ( 'on' => profiler, 'off' => no profiler, 'hidden' => profiler hidden in HTML ) 
-    'profiler_mode' => function() { return (hqt_setting('app_mode')==='dev' ? 'on' : 'off'); },
+    'profiler_mode' => function() { return (hqt_setting('app_mode')==='dev' ? 'on' : hqt_setting('profiler_default_mode')); },
+    // @array       profiler_user_stack        some infos to add to the page's profiler in "dev" app_mode
+    'profiler_user_stack' => array(),
     // @string      language        the page language (used by HTML5)
     'language' => 'en',
     // @string      charset         the page encoding (used by HTML5)
     'charset' => 'utf-8',
+    // @string      direction       direction of text in ( rtl ltr )
+    'direction' => 'ltr',
     // @array       headers         list of headers to send (each of them will be searched as a `header_xxx` setting)
     'headers' => array('Content-Type', 'Last-Modified'),
     // @string      header_Content-Type  the "Content-Type" header value
@@ -220,34 +226,18 @@ $hqt_default_settings = array(
     'mask_list_item_content' =>  '%2$s',
     // @array       navbar_items        list of navbar allowed items in ( toc , notes , top , bottom , summary )
     'navbar_items' => array('toc', 'notes', 'top', 'bottom', 'summary'),
-    // @string      block_title_toc     title of the table of contents
-    'block_title_toc' => 'Table of contents',
-    // @string      menu_item_content_toc   table of contents menu item
-    'menu_item_content_toc' => function() { return hqt_setting('block_title_toc'); },
     // @string      mask_list_toc       mask used to build global table of contents list
     'mask_list_toc' => '<ul>%s</ul>',
     // @string      mask_list_item_toc  mask used to build each table of contents list item
     'mask_list_item_toc' => '<li>%2$s</li>',
     // @string      mask_list_item_content_toc  mask used to build the content of each table of contents list item
     'mask_list_item_content_toc' => '<a href="#%s">%s</a>',
-    // @string      block_title_notes         title of the content notes
-    'block_title_notes' => 'Footnotes',
-    // @string      menu_item_content_notes     footnotes menu item
-    'menu_item_content_notes' => function() { return hqt_setting('block_title_notes'); },
     // @string      mask_list_notes     mask used to build global notes list
     'mask_list_notes' => '<ol>%s</ol>',
     // @string      mask_list_item_notes     mask used to build each notes list item
     'mask_list_item_notes' => '<li id="%s">%s</li>',
     // @string      mask_list_item_content_notes    mask used to build the content string of each notes list item
     'mask_list_item_content_notes' => '%2$s',
-    // @string      mask_author         mask used to build author info
-    //                                  this mask is completed with `$author`
-    'mask_author' => 'Content authored by %s.&nbsp;',
-    // @string      mask_update         mask used to build last update info
-    //                                  this mask is completed with formated `$update`
-    'mask_update' => 'Last update of this content at %s.&nbsp;',
-    // @string      menu_item_content_summary   title of the summary menu item
-    'menu_item_content_summary' => 'Summary',
     // @string      menu_item_content_stamp_icon    icon of the "stamp" menu item
     'menu_item_content_stamp_icon' => function() use (&$stamp_icon) {
         return '&nbsp;<i class="fa '.hqt_safestring($stamp_icon).'"></i>&nbsp;';
@@ -269,15 +259,62 @@ $hqt_default_settings = array(
     'libstylesheet_bootstrap' => "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css",
     // @string      libstylesheet_fontawesome     Font Awesome 4.0.3 <http://fortawesome.github.io/Font-Awesome>
     'libstylesheet_fontawesome' => "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css",
-    // @string      footer_info_app            footer application information string
-    'footer_info_app' => 'Page generated from an <a href="%s" title="%s">%s</a>.',
-    // @string      footer_info_dependencies   footer dependencies information string
-    'footer_info_dependencies' => 'Page built with the help of open source stuff such as <a href="http://jquery.com/" title="jquery.com">jQuery</a>, <a href="http://getbootstrap.com/" title="getbootstrap.com">Bootstrap</a> and <a href="http://fortawesome.github.io/Font-Awesome" title="fortawesome.github.io/Font-Awesome">Font Awesome</a>.',
-    // @array       profiler            some infos to add to the page's profiler in "dev" app_mode
-    'profiler' => array(),
+    // @array       language_strings    Overloading of default language strings (see `$hqt_language_strings`)
+    'language_strings' => array(),
 );
 
 ################# END OF SETTINGS ######################################################################################
+
+################# LN STRINGS ###########################################################################################
+/*
+ * Language strings are searched by their indexes, you MUST keep them intact.
+ * The final strings are completed with arguments (if so) via `sprintf` PHP function.
+ */
+
+/**
+ * @var array   Language strings
+ * You can overwrite each language string defining it in a `$settings['language_strings']` item
+ * using the same key as below.
+ */
+$hqt_language_strings = array(
+    'author_info' => 'Content authored by %s.&nbsp;',
+    'bottom_menu_item' => 'Bottom',
+    'bottom_menu_item_title' => 'reach the bottom of this page',
+    'footer_info_app' => 'Page generated from an <a href="%s" title="%s">%s</a>.',
+    'footer_info_dependencies' => 'Page built with the help of open source stuff such as <a href="http://jquery.com/" title="jquery.com">jQuery</a>, <a href="http://getbootstrap.com/" title="getbootstrap.com">Bootstrap</a> and <a href="http://fortawesome.github.io/Font-Awesome" title="fortawesome.github.io/Font-Awesome">Font Awesome</a>.',
+    'internet_connection_off' => 'Your internet connection seems off, the page will be rendered as raw HTML.',
+    'last_update_info' => 'Last update of this content at %s.&nbsp;',
+    'navigation_menu_title' => 'navigation menu',
+    'notes_block_header' => 'Footnotes',
+    'notes_menu_item' => 'Footnotes',
+    'notes_menu_item_title' => 'reach the footnotes of this page',
+    'outdated_browser_info' => 'You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.',
+    'profiler_button' => 'Profiler',
+    'profiler_button_title' => 'show / hide the profiler',
+    'profiler_request' => 'request',
+    'profiler_apps' => 'apps',
+    'profiler_date' => 'date',
+    'profiler_user_agent' => 'browser / device',
+    'profiler_server_os' => 'server OS',
+    'results' => 'results',
+    'search_field_placeholder' => 'search ...',
+    'search_field_mobile_clear' => 'clear search field',
+    'search_field_title' => 'in-page highlighting search field',
+    'search_field_clear_title' => 'clear search field [ESC]',
+    'secondary_block_handler_title' => 'show / hide this content block',
+    'show_hide' => 'show / hide',
+    'summary_menu_item' => 'Summary',
+    'summary_menu_item_title' => 'toggle content summary',
+    'toc_block_header' => 'Table of contents',
+    'toc_menu_item' => 'Table of contents',
+    'toc_menu_item_title' => 'reach the table of contents of this page',
+    'toggle_navigation' => 'Toggle navigation',
+    'top_menu_item' => 'Top',
+    'top_menu_item_title' => 'reach the top of this page',
+    'warning' => 'Warning!',
+);
+
+################# END OF LN STRINGS ####################################################################################
 
 ################# INTERNAL API #########################################################################################
 /*
@@ -294,7 +331,7 @@ define('HQT_NAME', 'html5-quick-template');
 /**
  * @constant    Current version of the app
  */
-define('HQT_VERSION', '1.0.1');
+define('HQT_VERSION', '1.0.2-dev');
 
 /**
  * @constant    URL of the app repo
@@ -308,14 +345,12 @@ define('HQT_HOME', 'http://github.com/pierowbmstr/html5-quick-template');
  * @param   array   $options    The user settings array
  * @return  void
  */
-function hqt_prepare($defaults = array(), $options = array())
+function hqt_prepare($defaults = array(), $options = array(), $ln = array())
 {
-    foreach (array_merge($defaults, $options) as $var=>$val) {
-        hqt_internal($var, $val);
-    }
-    if (!isset($options['footer_info_app']) || (isset($options['footer_info_app']) && $options['footer_info_app']==$defaults['footer_info_app'])) {
-        hqt_internal('footer_info_app', sprintf($defaults['footer_info_app'], HQT_HOME, HQT_NAME.' '.HQT_VERSION, HQT_NAME));
-    }
+    foreach (array_merge($defaults, $options) as $var=>$val) { hqt_internal($var, $val); }
+    $user_lns = hqt_setting('language_strings');
+    if (empty($user_lns) || !is_array($user_lns)) $user_lns = array();
+    hqt_internal('language_strings', array_merge($ln, $user_lns));
 }
 
 /**
@@ -344,7 +379,8 @@ function hqt_internal($var, $val = null, $default = null)
     if (!empty($val)) {
         $hqt_settings[$var] = $val;
     } else {
-        return isset($hqt_settings[$var]) ? $hqt_settings[$var] : $default;
+        $val = array_key_exists($var, $hqt_settings) ? $hqt_settings[$var] : $default;
+        return ((is_object($val) && ($val instanceof Closure)) ? hqt_callback($val, '') : $val);
     }
 }
 
@@ -364,6 +400,29 @@ function hqt_callback($callback, $str)
             $oldstr = $str;
             try { $str = call_user_func($_cb, $str); } catch (Exception $e) { $str = $oldstr; }
         }
+    }
+    return $str;
+}
+
+/**
+ * Translate a key string passing it arguments
+ *
+ * @param   string  $str    Index of the language strings array to retrieve translated string
+ * @param   array   $args   Arguments passed to the string to complete it
+ * @return  string
+ */
+function hqt_translate($str, $args = null)
+{
+    $ln_strs = hqt_setting('language_strings');
+    if (array_key_exists($str, $ln_strs)) {
+        $str = $ln_strs[$str];
+        if (!empty($args)) {
+            array_unshift($args, $str);
+            $str = call_user_func_array('sprintf', $args);
+        }
+    } else {
+        $str = $str;
+        if (!empty($args)) { $str .= ' ('.implode(' , ', $args).')'; }
     }
     return $str;
 }
@@ -523,10 +582,11 @@ function hqt_make_list($items, $callback = null, $options = array())
  */
 
 // env preparation
-hqt_prepare($hqt_default_settings, $settings);
+hqt_prepare($hqt_default_settings, $settings, $hqt_language_strings);
 
 // dump env vars when calling this file 
-if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && empty($_GET)) {
+$hqt_arg_mode = (isset($_GET['mode']) ? $_GET['mode'] : null);
+if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) || $hqt_arg_mode!='empty')) {
     ob_start();
     echo '<p class="lead">To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>.</p>';
     echo '<h2 id="links">Manuals</h2>';
@@ -535,13 +595,15 @@ if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && empty($_GET)) {
     echo '<p>The template tries to keep HTML5 and CSS3 valid. To test your contents, please see:</p><ul><li><a href="http://jigsaw.w3.org/css-validator/">the CSS3 validator provided by the W3C</a></li><li><a href="http://validator.nu/">Validator.nu to check HTML(5) syntax</a></li></ul>';
     echo '<h2 id="vars">Definable variables</h2><p>Dump of variables you can define calling the template and their default values.</p><pre>';
     $vars = get_defined_vars();
-    foreach (array('GLOBALS', '_POST', '_GET', '_COOKIE', '_FILES', '_ENV', '_REQUEST', '_SERVER', 'php_errormsg', 'dtmz', 'hqt_default_settings', 'hqt_app_mode_shortcut') as $key) { if (isset($vars[$key])) unset($vars[$key]); }
+    foreach (array('GLOBALS', '_POST', '_GET', '_COOKIE', '_FILES', '_ENV', '_REQUEST', '_SERVER', 'php_errormsg') as $key) { if (array_key_exists($key, $vars)) unset($vars[$key]); }
+    foreach ($vars as $k=>$v) { if (substr($k, 0, 3)=='hqt') unset($vars[$k]); }
+    ksort($vars, SORT_STRING);
     var_dump($vars);
     echo '</pre><h2 id="opts">Default settings</h2><p>Dump of the default template settings you can overwrite in a personal <code>$settings</code> array.</p><pre>';
     ksort($hqt_default_settings, SORT_STRING);
     var_dump($hqt_default_settings);
     echo '</pre>';
-    echo '<h2 id="dev">Development</h2><p>If you are working on the template source (from your own fork for instance), please note that you can set the <code>"app_mode"</code> on <kbd>dev</kbd> to get a profiler at the bottom of each page. A shortcut may be present at the top of the template script to enable the dev mode quickly.<br />You can also test the rendering a of an empty template (to validate it for instance) adding any query string to current URL, such as <a href="?test">this test</a>.</p>';
+    echo '<h2 id="dev">Development</h2><p>If you are working on the template source (from your own fork for instance), please note that you can set the <code>app_mode</code> on <kbd>dev</kbd> to get a profiler at the bottom of each page. A shortcut may be present at the top of the template script to enable the dev mode quickly. As this profiler is hidden by default, but present in the HTML source, you can add a <code>profiler=on</code> query argument to show it on load (<a href="?profiler=on">test on current URL</a>).</p><p>You can also test the rendering of an empty template (to validate it for instance) adding a <code>mode=empty</code> query argument (<a href="?mode=empty">test on current URL</a>).</p>';
     $content = ob_get_contents();
     ob_end_clean();
     $toc = array( 'links', 'vars'=>'Variables', 'opts'=>'Settings', 'dev'=>'Development' );
@@ -566,6 +628,8 @@ if (!empty($_headers) && is_array($_headers)) {
 
 // rendering
 $hqt_profiler_mode = hqt_safestring(hqt_setting('profiler_mode'));
+$hqt_direction_left = (hqt_setting('direction')==='rtl' ? 'right' : 'left');
+$hqt_direction_right = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
 ?><!DOCTYPE html>
 <html lang="<?php echo hqt_safestring(hqt_setting('language')); ?>">
 <head>
@@ -588,29 +652,29 @@ $hqt_profiler_mode = hqt_safestring(hqt_setting('profiler_mode'));
     <meta name="author" content="<?php echo hqt_safestring($author); ?>">
 <?php endif; ?>
 <style>
-body                            { padding-top: 70px; }
+body                            { padding-top: 70px; direction: <?php echo hqt_setting('direction'); ?>; }
 .navbar .container              { width: 100%; }
 .wrapper                        { padding-bottom: 20px; }
 aside, nav                      { margin: 12px; padding: 12px 20px; border-radius: 6px; max-width: 20%; }
 aside#secondary-contents        { margin: 15px 20px; padding: 0; position: relative; }
 .secondary-content              { margin: 2px; padding: 15px; border-radius: 4px; }
 .handler a                      { color: #777777; }
-aside, nav ul                   { padding-left: 22px; }
+aside, nav ul                   { padding-<?php echo $hqt_direction_left; ?>: 22px; }
 .footer                         { font-size: 85%; background-color: #f5f5f5; color: #333333; padding: 12px; border-radius: 6px; position: relative; }
-h3                              { padding-left: .5em; }
-h4:not([id="toc"])              { padding-left: 1em; }
-h5                              { padding-left: 2em; }
-h6                              { padding-left: 3em; }
+h3                              { padding-<?php echo $hqt_direction_left; ?>: .5em; }
+h4:not([id="toc"])              { padding-<?php echo $hqt_direction_left; ?>: 1em; }
+h5                              { padding-<?php echo $hqt_direction_left; ?>: 2em; }
+h6                              { padding-<?php echo $hqt_direction_left; ?>: 3em; }
 .footnotes                      { font-size: .9em; }
 .highlight                      { background : #ff0; }
 .bg-info                        { background-color: #D9EDF7; }
 .bg-default                     { background-color: #f5f5f5; }
 .navbar-brand i                 { font-size: 22px; }
 form.navbar-form                { position: relative; }
-.navbar-form.navbar-right:last-child { margin-right: 0px; }
-input#search                    { padding-right: 24px; }
-span.search-icon, span.search-icon-alt                { position: absolute; display: block; top: 10px; right: 24px; z-index: 100; cursor: pointer; }
-.dropdown-menu li > ul          { list-style-type: none; padding-left: 24px; }
+.navbar-form.navbar-right:last-child { margin-<?php echo $hqt_direction_right; ?>: 0px; }
+input#search-field              { padding-<?php echo $hqt_direction_right; ?>: 24px; }
+span.search-icon, span.search-icon-alt                { position: absolute; display: block; top: 10px; <?php echo $hqt_direction_right; ?>: 24px; z-index: 100; cursor: pointer; }
+.dropdown-menu li > ul          { list-style-type: none; padding-<?php echo $hqt_direction_left; ?>: 24px; }
 .dropdown-menu li > ul li       { margin: 0px; }
 .dropdown-menu li li > a        { display: block; padding: 3px 6px; clear: both; font-weight: normal; line-height: 1.428571429; color: #333333; white-space: nowrap; }
 .dropdown-menu li li > a:hover,
@@ -650,16 +714,16 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     <!--[if lt IE 7]>
     <div class="alert alert-warning alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <strong>Warning!</strong> You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.
+        <strong><?php echo hqt_translate('warning'); ?></strong> <?php echo hqt_translate('outdated_browser_info'); ?>
     </div>
     <![endif]-->
-    <div class="alert alert-warning hidden">Your internet connection seems off, the page will be rendered as raw HTML.</div>
+    <div class="alert alert-warning hidden"><?php echo hqt_translate('internet_connection_off'); ?></div>
     <a id="top"></a>
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
-            <div class="navbar-header hidden-no-js">
-                <button id="main-navbar-handler" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="navigation menu">
-                    <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            <div class="navbar-header navbar-<?php echo $hqt_direction_left; ?> hidden-no-js">
+                <button id="main-navbar-handler" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="<?php echo hqt_translate('navigation_menu_title'); ?>">
+                    <span class="sr-only"><?php echo hqt_translate('toggle_navigation'); ?></span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="<?php echo isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : ''); ?>">
                     <?php $icon = hqt_setting('brand_icon'); if (!empty($icon)) : ?>
@@ -669,22 +733,22 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
                 </a>
             </div>
             <div id="main-navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-<?php echo $hqt_direction_right; ?>">
 <?php if (!empty($toc) && @in_array('toc', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#toc" title="reach the table of contents of this page"><i class="fa fa-book"></i><span class="hidden-sm">&nbsp;<?php echo hqt_safestring(hqt_setting('menu_item_content_toc')); ?></span></a></li>
+                    <li><a href="#toc" title="<?php echo hqt_translate('toc_menu_item_title'); ?>"><i class="fa fa-book"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('toc_menu_item');; ?></span></a></li>
 <?php endif; ?>
 <?php if (!empty($notes) && @in_array('notes', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#notes" title="reach the footnotes of this page"><i class="fa fa-thumb-tack"></i><span class="hidden-sm">&nbsp;<?php echo hqt_safestring(hqt_setting('menu_item_content_notes')); ?></span></a></li>
+                    <li><a href="#notes" title="<?php echo hqt_translate('notes_menu_item_title'); ?>"><i class="fa fa-thumb-tack"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('notes_menu_item');; ?></span></a></li>
 <?php endif; ?>
 <?php if (@in_array('top', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#top" title="reach the top of this page"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;Top</span></a></li>
+                    <li><a href="#top" title="<?php echo hqt_translate('top_menu_item_title'); ?>"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('top_menu_item'); ?></span></a></li>
 <?php endif; ?>
 <?php if (@in_array('bottom', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#bottom" title="reach the bottom of this page"><i class="fa fa-angle-down"></i><span class="hidden-sm">&nbsp;Bottom</span></a></li>
+                    <li><a href="#bottom" title="<?php echo hqt_translate('bottom_menu_item_title'); ?>"><i class="fa fa-angle-down"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('bottom_menu_item'); ?></span></a></li>
 <?php endif; ?>
 <?php if (@in_array('summary', hqt_setting('navbar_items')) && (!empty($secondary_contents) || !empty($toc))) : ?>
                     <li class="dropdown hidden-no-js">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><?php echo hqt_safestring(hqt_setting('menu_item_content_summary')); ?> <b class="caret"></b></a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" title="<?php echo hqt_translate('summary_menu_item_title'); ?>"><?php echo hqt_translate('summary_menu_item'); ?> <b class="caret"></b></a>
                         <ul class="dropdown-menu">
     <?php if (!empty($toc)) : ?>
                             <?php
@@ -709,24 +773,24 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
 <?php endif; ?>
                     <li class="active"><?php echo hqt_safestring(hqt_setting('menu_item_content_stamp')); ?></li>
                 </ul>
-                <form class="navbar-form navbar-right hidden-no-js" role="search">
+                <form class="navbar-form navbar-<?php echo $hqt_direction_right; ?> hidden-no-js" role="search">
                     <span id="result-count" class="text-primary"></span>&nbsp;
-                    <span id="delete-search-alt" class="text-primary search-icon-alt visible-xs hidden">[clear search field]</span>
-                    <input id="search-field" class="form-control" type="search" tabindex="1" placeholder="search ..." title="in-page highlighting search field">
+                    <span id="delete-search-alt" class="text-primary search-icon-alt visible-xs hidden">[<?php echo hqt_translate('search_field_mobile_clear'); ?>]</span>
+                    <input id="search-field" class="form-control" type="search" tabindex="1" placeholder="<?php echo hqt_translate('search_field_placeholder'); ?>" title="<?php echo hqt_translate('search_field_title'); ?>">
                     <span id="icon-search" class="search-icon fa fa-search"></span>
-                    <span id="delete-search" class="text-primary search-icon fa fa-times hidden" title="clear search field [ESC]"></span>
+                    <span id="delete-search" class="text-primary search-icon fa fa-times hidden" title="<?php echo hqt_translate('search_field_clear_title'); ?>"></span>
                 </form>
             </div>
         </div>
     </div>
     <div id="wrapper" class="wrapper container-fluid">
 <?php if (!empty($secondary_contents)) : ?>
-        <aside id="secondary-contents" class="pull-right">
+        <aside id="secondary-contents" class="pull-<?php echo $hqt_direction_right; ?>">
     <?php foreach ($secondary_contents as $i => $_item) : $id = hqt_slugify($i); ?>
             <div class="secondary-content bg-default">
                 <p class="text-muted handler">
-                    <a class="no-hash" data-toggle="collapse" href="#secondary-content-<?php echo $id; ?>" onClick="$(this).find('i').toggleClass('fa-angle-up').toggleClass('fa-angle-down');" data-jqtitle="show / hide this content block">
-                        <i class="fa fa-angle-up"></i>&nbsp;<?php echo ($id != (string) $i) ? hqt_stringify($i) : 'show / hide'; ?>
+                    <a class="no-hash" data-toggle="collapse" href="#secondary-content-<?php echo $id; ?>" onClick="$(this).find('i').toggleClass('fa-angle-up').toggleClass('fa-angle-down');" data-jqtitle="<?php echo hqt_translate('secondary_block_handler_title'); ?>">
+                        <i class="fa fa-angle-up"></i>&nbsp;<?php echo ($id != (string) $i) ? hqt_stringify($i) : hqt_translate('show_hide'); ?>
                     </a>
                 </p>
                 <div id="secondary-content-<?php echo $id; ?>" class="collapse in">
@@ -744,8 +808,8 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
             </header>
 <?php endif; ?>
 <?php if (!empty($toc)) : ?>
-            <nav class="bg-info <?php echo (!empty($secondary_contents)) ? 'pull-left' : 'pull-right'; ?> hidden-print">
-    <?php $block_title_toc = hqt_setting('block_title_toc'); if (!empty($block_title_toc)) : ?>
+            <nav class="bg-info <?php echo (!empty($secondary_contents)) ? 'pull-'.$hqt_direction_left : 'pull-'.$hqt_direction_right; ?> hidden-print">
+    <?php $block_title_toc = hqt_translate('toc_block_header'); if (!empty($block_title_toc)) : ?>
                 <h4 id="toc"><?php echo hqt_safestring($block_title_toc); ?></h4>
     <?php endif; ?>
                 <?php echo hqt_make_list($toc, array('hqt_stringify','ucfirst'), array(
@@ -761,7 +825,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
             <hr />
             <footer>
                 <div class="footnotes">
-    <?php $block_title_notes = hqt_setting('block_title_notes'); if (!empty($block_title_notes)) : ?>
+    <?php $block_title_notes = hqt_translate('notes_block_header'); if (!empty($block_title_notes)) : ?>
                     <h4 id="notes"><?php echo hqt_safestring($block_title_notes); ?></h4>
     <?php endif; ?>
                     <?php echo hqt_make_list($notes, array('hqt_stringify'), array(
@@ -774,7 +838,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
 <?php endif; ?>
 <?php if (!empty($author) || !empty($update) || !empty($content_notice)) : ?>
             <hr />
-            <footer class="text-right text-muted"><p class="small">
+            <footer class="text-<?php echo $hqt_direction_right; ?> text-muted"><p class="small">
     <?php if (!empty($content_notice)) : ?>
                 <?php echo hqt_safestring($content_notice); ?>
         <?php if (!empty($author) || !empty($update)) : ?>
@@ -782,40 +846,40 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
         <?php endif; ?>
     <?php endif; ?>
     <?php if (!empty($author)) : ?>
-                <?php echo hqt_safestring($author, hqt_setting('mask_author')); ?>
+                <?php echo hqt_translate('author_info', array(hqt_safestring($author))); ?>
         <?php if (!empty($update)) : ?>
                 <br class="visible-xs">
         <?php endif; ?>
     <?php endif; ?>
     <?php if (!empty($update)) : ?>
-                <?php echo hqt_safestring($update, hqt_setting('mask_update')); ?>
+                <?php echo hqt_translate('last_update_info', array(hqt_safestring($update))); ?>
     <?php endif; ?>
             </p></footer>
 <?php endif; ?>
         </article>
         <footer>
             <div class="footer">
-                <div class="pull-right text-right">
+                <div class="pull-<?php echo $hqt_direction_right; ?> text-<?php echo $hqt_direction_right; ?>">
     <?php if (!empty($page_notice)) : ?>
                     <?php echo hqt_safestring($page_notice); ?><br>
     <?php endif; ?>
-                    <?php echo hqt_setting('footer_info_app'); ?><br><?php echo hqt_setting('footer_info_dependencies'); ?>
+                    <?php echo hqt_translate('footer_info_app', array(HQT_HOME, HQT_NAME.' '.HQT_VERSION, HQT_NAME)); ?><br><?php echo hqt_translate('footer_info_dependencies'); ?>
                 </div>
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
-                <div id="hqt-profiler" class="pull-left responsive">
+                <div id="hqt-profiler" class="pull-<?php echo $hqt_direction_left; ?> responsive">
                     <div class="clearfix visible-xs"><br /></div>
                     <div class="profiler">
                         <ul class="nav nav-pills">
-                            <li class="handler"><a class="no-hash" data-toggle="collapse" href="#profiler" data-jqtitle="show / hide the profiler"><i class="fa fa-cogs"></i>&nbsp;Profiler</a></li>
+                            <li class="handler"><a class="no-hash" data-toggle="collapse" href="#profiler" data-jqtitle="<?php echo hqt_translate('profiler_button_title'); ?>"><i class="fa fa-cogs"></i>&nbsp;<?php echo hqt_translate('profiler_button'); ?></a></li>
                         </ul>
                         <div id="profiler" class="collapse">
                             <dl class="dl-horizontal">
-                                <dt>request</dt><dd><a id="profiler-request"></a></dd>
-                                <dt>apps</dt><dd id="profiler-apps"><?php echo HQT_NAME.' '.HQT_VERSION; ?></dd>
-                                <dt>date</dt><dd id="profiler-date"><?php echo date('c'); ?> (<?php echo @date_default_timezone_get(); ?>)</dd>
-                                <dt>browser / device</dt><dd id="profiler-user-agent"></dd>
-                                <dt>server OS</dt><dd id="profiler-server"><?php echo php_uname(); ?></dd>
-    <?php $profiler = hqt_setting('profiler'); if (!empty($profiler)) : ?>
+                                <dt><?php echo hqt_translate('profiler_request'); ?></dt><dd><a id="profiler-request"></a></dd>
+                                <dt><?php echo hqt_translate('profiler_apps'); ?></dt><dd id="profiler-apps"><?php echo HQT_NAME.' '.HQT_VERSION; ?></dd>
+                                <dt><?php echo hqt_translate('profiler_date'); ?></dt><dd id="profiler-date"><?php echo date('c'); ?> (<?php echo @date_default_timezone_get(); ?>)</dd>
+                                <dt><?php echo hqt_translate('profiler_user_agent'); ?></dt><dd id="profiler-user-agent"></dd>
+                                <dt><?php echo hqt_translate('profiler_server_os'); ?></dt><dd id="profiler-server"><?php echo php_uname(); ?></dd>
+    <?php $profiler = hqt_setting('profiler_user_stack'); if (!empty($profiler)) : ?>
         <?php foreach ($profiler as $var=>$val) : ?>
                                 <dt><?php echo (is_string($var) ? hqt_safestring($var) : ''); ?></dt>
                                 <dd id="profiler-<?php echo hqt_slugify($var); ?>"><?php echo hqt_safestring($val); ?></dd>
@@ -849,6 +913,7 @@ highlight v4 - Highlights arbitrary terms - MIT license - Johann Burkard
 jQuery.fn.highlight=function(c){function e(b,c){var d=0;if(3==b.nodeType){var a=b.data.toUpperCase().indexOf(c);if(0<=a){d=document.createElement("span");d.className="highlight";a=b.splitText(a);a.splitText(c.length);var f=a.cloneNode(!0);d.appendChild(f);a.parentNode.replaceChild(d,a);d=1}}else if(1==b.nodeType&&b.childNodes&&!/(script|style)/i.test(b.tagName))for(a=0;a<b.childNodes.length;++a)a+=e(b.childNodes[a],c);return d}return this.length&&c&&c.length?this.each(function(){e(this,c.toUpperCase())}): this};jQuery.fn.removeHighlight=function(){return this.find("span.highlight").each(function(){this.parentNode.firstChild.nodeName;with(this.parentNode)replaceChild(this.firstChild,this),normalize()}).end()};
 
 $(function() {
+    var _searchString = _query.substr(_query.indexOf("search=")).split("&")[0].split("=")[1];
     function getScriptVersion(script_id) {
         var script = $("#"+script_id),
             script_src = script.attr("src"),
@@ -868,6 +933,7 @@ $(function() {
         $("#delete-search, #delete-search-alt").addClass("hidden");
         $("#wrapper").removeHighlight();
         $("#result-count").text("");
+        if (_searchString) document.location.href = document.location.href.replace("search="+_searchString, '');
     }
     function scrollToAnchor(href) {
         href = typeof(href) == "string" ? href : $(this).attr("href");
@@ -923,14 +989,13 @@ $(function() {
         matches = $("#wrapper").html().match(new RegExp(phrase_regex, "gi"));
         count = matches ? (matches.length) : 0;
         $("#wrapper").highlight(phrase);
-        $("#result-count").text(count + " results");
+        $("#result-count").text(count + " <?php echo hqt_translate('results'); ?>");
         searchField.search = null;
     };
     searchField.input.keyup(function(e) {
         if (searchField.search) { clearTimeout(searchField.search); }
         searchField.search = setTimeout(searchField.performSearch, 300);
     });
-    var _searchString = _query.substr(_query.indexOf("search=")).split("&")[0].split("=")[1];
     if (_searchString) {
         $("#search-field").val(_searchString).select().focus();
         searchField.performSearch();
