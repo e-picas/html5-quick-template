@@ -89,7 +89,7 @@ if (!isset($toc)) $toc = array();
 if (!isset($metas)) $metas = array();
 
 /**
- * @var    string|array    The page additional stylsheets `src` list
+ * @var    string|array    The page additional stylesheets `src` list
  */
 if (!isset($stylesheets)) $stylesheets = array();
 
@@ -151,11 +151,14 @@ if (!isset($settings) || !is_array($settings)) $settings = array();
  * Settings are loaded by their key string, you need to keep these keys intact. For more
  * facilities, keys are prefixed by their "family" type: `mask_`, `length_` ...
  *
- * Settings values may be a string or an array (see comments below) ; you can use anonymous 
+ * Settings values may be a string or an array (see comments below) ; you can use anonymous
  * functions to return the final value (see <http://www.php.net/manual/en/functions.anonymous.php>).
  * When writing closures, you must define a `use` statement to access page's variables:
  *
  *      function() use (&$content) { ... }
+ *
+ * You MUST write your masks using only the `%s` specifier. You can rearrange specifiers to handle
+ * any received argument using the `%1$s` notation (see <http://www.php.net/manual/en/function.sprintf.php>).
  */
 
 /**
@@ -169,7 +172,7 @@ $hqt_default_settings = array(
     'profiler_default_mode' => 'hidden',
     // @array       profiler_mode  the actual profiler mode in ( 'on' => profiler, 'off' => no profiler, 'hidden' => profiler hidden in HTML ) 
     'profiler_mode' => function() { return (hqt_setting('app_mode')==='dev' ? 'on' : hqt_setting('profiler_default_mode')); },
-    // @array       profiler_user_stack        some infos to add to the page's profiler in "dev" app_mode
+    // @array       profiler_user_stack  some infos to add to the page's profiler
     'profiler_user_stack' => array(),
     // @string      language        the page language (used by HTML5)
     'language' => 'en',
@@ -197,7 +200,7 @@ $hqt_default_settings = array(
     'slug_glue' => '-',
     // @string      slug_mask           mask to catch replaced characters used to build slugs
     'slug_mask' => '~[^a-zA-Z0-9]+~u',    
-    // @numeric     length_extract      length of introductions or extracts of contents
+    // @numeric     length_extract      length of introduction or extract of contents
     'length_extract' => 180,
     // @numeric     length_title        length of title when constructed from a content
     'length_title' => 32,
@@ -268,7 +271,7 @@ $hqt_default_settings = array(
 ################# LN STRINGS ###########################################################################################
 /*
  * Language strings are searched by their indexes, you MUST keep them intact.
- * The final strings are completed with arguments (if so) via `sprintf` PHP function.
+ * The final strings are completed with arguments (if so) via `sprintf()` PHP function.
  */
 
 /**
@@ -300,7 +303,7 @@ $hqt_language_strings = array(
     'search_field_placeholder' => 'search ...',
     'search_field_mobile_clear' => 'clear search field',
     'search_field_title' => 'in-page highlighting search field',
-    'search_field_clear_title' => 'clear search field [ESC]',
+    'search_field_clear_title' => 'clear search field',
     'secondary_block_handler_title' => 'show / hide this content block',
     'show_hide' => 'show / hide',
     'summary_menu_item' => 'Summary',
@@ -320,7 +323,7 @@ $hqt_language_strings = array(
 /*
  * The methods of the internal API are all prefixed with `hqt_`.
  * They MUST NOT throw any error or exception.
- * Must of them MUST return a string.
+ * Most of them MUST return a string.
  */
 
 /**
@@ -341,12 +344,13 @@ define('HQT_HOME', 'http://github.com/pierowbmstr/html5-quick-template');
 /**
  * Prepare the env vars
  *
- * @param   array   $defaults   The default settings array
- * @param   array   $options    The user settings array
- * @return  void
+ * @param       array   $defaults   The default settings array
+ * @param       array   $options    The user settings array
+ * @param       array   $ln         The app language strings
+ * @setting     language_strings    List of user language strings
+ * @return      void
  */
-function hqt_prepare($defaults = array(), $options = array(), $ln = array())
-{
+function hqt_prepare($defaults = array(), $options = array(), $ln = array()) {
     foreach (array_merge($defaults, $options) as $var=>$val) { hqt_internal($var, $val); }
     $user_lns = hqt_setting('language_strings');
     if (empty($user_lns) || !is_array($user_lns)) $user_lns = array();
@@ -360,8 +364,7 @@ function hqt_prepare($defaults = array(), $options = array(), $ln = array())
  * @param   mixed   $default    The default value if setting was not found
  * @return  mixed
  */
-function hqt_setting($name, $default = null)
-{
+function hqt_setting($name, $default = null) {
     return hqt_internal($name, null, $default);
 }
 
@@ -373,8 +376,7 @@ function hqt_setting($name, $default = null)
  * @param   mixed   $default    The default value while getting if setting was not found
  * @return  mixed
  */
-function hqt_internal($var, $val = null, $default = null)
-{
+function hqt_internal($var, $val = null, $default = null) {
     static $hqt_settings = array();
     if (!empty($val)) {
         $hqt_settings[$var] = $val;
@@ -391,8 +393,7 @@ function hqt_internal($var, $val = null, $default = null)
  * @param   string          $str        The single `$str` argument passed to callback(s)
  * @return  string
  */
-function hqt_callback($callback, $str)
-{
+function hqt_callback($callback, $str) {
     if (empty($callback)) return $str;
     if (!is_array($callback)) $callback = array( $callback );
     foreach ($callback as $_cb) {
@@ -407,12 +408,12 @@ function hqt_callback($callback, $str)
 /**
  * Translate a key string passing it arguments
  *
- * @param   string  $str    Index of the language strings array to retrieve translated string
- * @param   array   $args   Arguments passed to the string to complete it
- * @return  string
+ * @param       string          $str    Index of the language strings array to retrieve translated string
+ * @param       array           $args   Arguments passed to the string to complete it
+ * @setting     language_strings        List of all actual language strings
+ * @return      string
  */
-function hqt_translate($str, $args = null)
-{
+function hqt_translate($str, $args = null) {
     $ln_strs = hqt_setting('language_strings');
     if (array_key_exists($str, $ln_strs)) {
         $str = $ln_strs[$str];
@@ -420,30 +421,30 @@ function hqt_translate($str, $args = null)
             array_unshift($args, $str);
             $str = call_user_func_array('sprintf', $args);
         }
-    } else {
-        $str = $str;
-        if (!empty($args)) { $str .= ' ('.implode(' , ', $args).')'; }
-    }
+    } elseif (!empty($args)) { $str .= ' ('.implode(' , ', $args).')'; }
     return $str;
 }
 
 /**
- * Returns a safe string passing it in `$mask` with `sprintf()` and transforming it if `$transform===true`
+ * Returns a safe string passing it in `$mask` with `sprintf()` and to a list of optional callbacks
  * 
  * @param    mixed          $what        The original content to stringify
  * @param    string         $mask        The mask to use to build the content
  * @param    null|callable  $callback    A callback method to finally transform the string
- * @setting  date_format                 String used to formate DateTime objects
+ * @param    string         $items_glue  A string used to join array items
+ * @setting  mask_default                Default value for `$mask`
+ * @setting  date_format                 String used to format DateTime objects
  * @return   string
  */
-function hqt_safestring($what, $mask = null, $callback = null)
-{
+function hqt_safestring($what, $mask = null, $callback = null, $items_glue = ' ') {
     if (is_null($mask)) $mask = hqt_setting('mask_default');
     $str = '';
     if (is_array($what)) {
+        $count = 0;
         foreach ($what as $var=>$val) {
             $valnum = substr_count($mask, '%s');
-            $str .= ($valnum > 1) ? sprintf($mask, $var, $val) : sprintf($mask, $val);
+            $str .= ($count>0 ? $items_glue : '').(($valnum > 1) ? sprintf($mask, $var, $val) : sprintf($mask, $val));
+            $count++;
         }
     } elseif (is_object($what)) {
         if ($what instanceof DateTime) {
@@ -464,17 +465,12 @@ function hqt_safestring($what, $mask = null, $callback = null)
  * @param    mixed          $what        The original content to stringify
  * @param    string         $mask        The mask to use to build the content
  * @param    null|callable  $callback    A callback method to finally transform the string
+ * @setting  mask_default                Default mask used if `$str` is a simple string
  * @return   string
  * @see      hqt_safestring()
  */
-function hqt_safestringifarray($what, $mask = null, $callback = null)
-{
-    if (is_array($what)) {
-        $str = hqt_safestring($what, $mask, $callback);
-    } else {
-        $str = hqt_safestring($what, hqt_setting('mask_default'), $callback);
-    }
-    return $str; 
+function hqt_safestringifarray($what, $mask = null, $callback = null) {
+    return (is_array($what) ? hqt_safestring($what, $mask, $callback) : hqt_safestring($what, hqt_setting('mask_default'), $callback));
 }
 
 /**
@@ -486,8 +482,7 @@ function hqt_safestringifarray($what, $mask = null, $callback = null)
  * @setting string_strip                Car(s). stripped
  * @return  string
  */
-function hqt_stringify($str, $callback = null)
-{
+function hqt_stringify($str, $callback = null) {
     $str = str_replace(hqt_setting('string_spacify'), ' ', (string) $str);
     $str = str_replace(hqt_setting('string_strip'), '', $str);
     $str = hqt_callback($callback, $str);
@@ -499,11 +494,11 @@ function hqt_stringify($str, $callback = null)
  *
  * @param   string          $str        The original string
  * @param   null|callable   $callback   A callback method to finally transform the string
+ * @setting slug_mask                   REGEX mask to match striped chars
  * @setting slug_glue                   Car. used to replace unwanted cars.
  * @return  string
  */
-function hqt_slugify($str, $callback = null)
-{
+function hqt_slugify($str, $callback = null) {
     $str = preg_replace(hqt_setting('slug_mask'), hqt_setting('slug_glue'), (string) $str);
     $str = strtolower(trim($str, hqt_setting('slug_glue')));
     $str = hqt_callback($callback, $str);
@@ -514,13 +509,12 @@ function hqt_slugify($str, $callback = null)
  * Returns a safe string extracted from original
  * 
  * @param    mixed           $what       The original content to extract
- * @param    numeric         $length     The length to extract (default is `settings[ length_extract ]`)
+ * @param    int             $length     The length to extract (default is `settings[ length_extract ]`)
  * @param    null|callable   $callback   A callback method to finally transform the string
  * @setting  length_extract              Length of the extracted string
  * @return   string
  */
-function hqt_extract($what, $length = null, $callback = null)
-{
+function hqt_extract($what, $length = null, $callback = null) {
     if (is_null($length)) $length = hqt_setting('length_extract');
     $str = substr(hqt_safestring($what), 0, $length);
     $str = htmlentities(trim(strip_tags($str), "\n"));
@@ -531,7 +525,7 @@ function hqt_extract($what, $length = null, $callback = null)
 /**
  * Build a table of contents from an array of items
  * 
- * @param    array          $toc          The list items array like `id => content` or `id => sub-items` recursively
+ * @param    array          $items        The list items array like `id => content` or `id => sub-items` recursively
  * @param    null|callable  $callback     A callback method to finally transform the string
  * @param    array          $options      An array of options to override current page settings
  * @setting  mask_list
@@ -539,24 +533,21 @@ function hqt_extract($what, $length = null, $callback = null)
  * @setting  mask_list_item_content
  * @return   string
  */
-function hqt_make_list($items, $callback = null, $options = array())
-{
+function hqt_make_list($items, $callback = null, $options = array()) {
     $str = '';
     if (is_array($items)) {
-        $list_options = array(
+        $list_options = array_merge(array(
             'mask_list' => hqt_setting('mask_list'),
             'mask_list_item' => hqt_setting('mask_list_item'),
             'mask_list_item_content' => hqt_setting('mask_list_item_content'),
-        );
-        $list_options = array_merge($list_options, (is_array($options) ? $options : array()));
+        ), (is_array($options) ? $options : array()));
         foreach ($items as $var=>$val) { 
             if (!is_string($var) && is_string($val)) { $var = $val; }
             if (is_array($val)) {
                 $str .= sprintf(
                     $list_options['mask_list_item'],
                     hqt_safestring($var),
-                    sprintf($list_options['mask_list_item_content'], hqt_safestring($var), hqt_safestring($var, null, $callback))
-                        . hqt_make_list($val, $callback, $options)
+                    sprintf($list_options['mask_list_item_content'], hqt_safestring($var), hqt_safestring($var, null, $callback)) . hqt_make_list($val, $callback, $options)
                 );
             } else {
                 $str .= sprintf(
@@ -603,10 +594,14 @@ if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) 
     ksort($hqt_default_settings, SORT_STRING);
     var_dump($hqt_default_settings);
     echo '</pre>';
+    echo '</pre><h2 id="languages">Default language strings</h2><p>Dump of the default language strings you can overwrite in a personal <code>$settings["language_strings"]</code> array using the same indexes as below.</p><pre>';
+    ksort($hqt_language_strings, SORT_STRING);
+    var_dump($hqt_language_strings);
+    echo '</pre>';
     echo '<h2 id="dev">Development</h2><p>If you are working on the template source (from your own fork for instance), please note that you can set the <code>app_mode</code> on <kbd>dev</kbd> to get a profiler at the bottom of each page. A shortcut may be present at the top of the template script to enable the dev mode quickly. As this profiler is hidden by default, but present in the HTML source, you can add a <code>profiler=on</code> query argument to show it on load (<a href="?profiler=on">test on current URL</a>).</p><p>You can also test the rendering of an empty template (to validate it for instance) adding a <code>mode=empty</code> query argument (<a href="?mode=empty">test on current URL</a>).</p>';
     $content = ob_get_contents();
     ob_end_clean();
-    $toc = array( 'links', 'vars'=>'Variables', 'opts'=>'Settings', 'dev'=>'Development' );
+    $toc = array( 'links', 'vars'=>'Variables', 'opts'=>'Settings', 'languages'=>'Language strings', 'dev'=>'Development' );
     $update = new DateTime;
     $update->setTimestamp(filemtime(__FILE__)); 
     $title = HQT_NAME.' '.HQT_VERSION;
@@ -627,9 +622,9 @@ if (!empty($_headers) && is_array($_headers)) {
 }
 
 // rendering
-$hqt_profiler_mode = hqt_safestring(hqt_setting('profiler_mode'));
-$hqt_direction_left = (hqt_setting('direction')==='rtl' ? 'right' : 'left');
-$hqt_direction_right = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
+$hqt_profiler_mode      = hqt_safestring(hqt_setting('profiler_mode'));
+$hqt_direction_left     = (hqt_setting('direction')==='rtl' ? 'right' : 'left');
+$hqt_direction_right    = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
 ?><!DOCTYPE html>
 <html lang="<?php echo hqt_safestring(hqt_setting('language')); ?>">
 <head>
@@ -688,17 +683,17 @@ body.no-js ul.navbar-nav li     { display: inline; padding: 0; }
 body.no-js ul.navbar-nav li.hidden-no-js { display: none; }
 body.no-js ul.navbar-nav a      { text-decoration: none; }
 @media (min-width: 768px) and (max-width: 991px) {
-    aside, nav                  { max-width: 40%; }
+    aside, nav                      { max-width: 40%; }
     body.no-js aside, body.no-js nav{ max-width: 100%; }
 }
 @media (max-width: 767px) {
-    aside, nav                  { max-width: 100%; }
-    aside#secondary-contents    { margin: 10px; }
-    .secondary-content          { display: block; min-width: 100%; }
-    span.search-icon            { top: 40px; }
-    .responsive                 { width: 100%; overflow: auto; }
-    .navbar li a .visible-xs    { display: inline !important; }
-    .dropdown-menu li li > a    { color: #777777; }
+    aside, nav                      { max-width: 100%; }
+    aside#secondary-contents        { margin: 10px; }
+    .secondary-content              { display: block; min-width: 100%; }
+    span.search-icon                { top: 40px; }
+    .responsive                     { width: 100%; overflow: auto; }
+    .navbar li a .visible-xs        { display: inline !important; }
+    .dropdown-menu li li > a        { color: #777777; }
     .dropdown-menu li li > a:hover,
     .dropdown-menu li li > a:focus  { background-color: transparent; }
     body.no-js aside, body.no-js nav{ max-width: 100%; }
@@ -846,7 +841,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
         <?php endif; ?>
     <?php endif; ?>
     <?php if (!empty($author)) : ?>
-                <?php echo hqt_translate('author_info', array(hqt_safestring($author))); ?>
+                <?php echo hqt_translate('author_info', array(hqt_safestring($author, null, null, ', '))); ?>
         <?php if (!empty($update)) : ?>
                 <br class="visible-xs">
         <?php endif; ?>
@@ -903,7 +898,7 @@ var _query = document.location.search.substr(1);
 
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
 document.getElementById("profiler-user-agent").innerHTML = navigator.userAgent;
-document.getElementById("profiler-request").innerHTML = document.location.href;
+document.getElementById("profiler-request").innerHTML    = document.location.href;
 <?php endif; ?>
 
 /*
@@ -992,6 +987,7 @@ $(function() {
         $("#result-count").text(count + " <?php echo hqt_translate('results'); ?>");
         searchField.search = null;
     };
+    searchField.input.attr("title", searchField.input.attr("title")+" [ESC]");
     searchField.input.keyup(function(e) {
         if (searchField.search) { clearTimeout(searchField.search); }
         searchField.search = setTimeout(searchField.performSearch, 300);
