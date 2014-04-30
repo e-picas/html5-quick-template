@@ -15,7 +15,8 @@ A simple blank HTML5 template for quick rendering.
 -   printers friendly
 -   search in page with highlight and count of results (3 chars. min)
 -   use `TAB` key to select search field and `ESC` key to clear current search
--   query string to process a search on document load with `?search=...`
+-   query string to process a search on document load with `search=...`
+-   simple profiler (hidden by default) visible on document load with query argument `profiler=on`
 
 ![Alt text](screen-copy.jpg "Screen sample rendering of the test.php file")
 
@@ -53,6 +54,9 @@ source file.
 You can overload internal settings defining a `$settings` array in your script, with all
 default settings entries or part of them. Please see the `SETTINGS` part in the `html5-quick-template.html.php`
 source file for a full list.
+
+The template is ready for internationalization and "left-to-right" languages (have a look
+at the `LN STRINGS` part in the source file).
 
 ### Documentation
 

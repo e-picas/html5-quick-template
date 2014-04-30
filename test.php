@@ -211,6 +211,7 @@ $page_notice = 'Contents are licensed under the <strong>unknown</strong> license
 $settings = array();
 $settings['app_mode'] = 'dev';
 //$settings['profiler_mode'] = 'hidden';
+//$settings['direction'] = 'rtl';
 $settings['date_format'] = 'D-M-Y';
 $settings['brand_icon'] = '<i class="fa fa-html5"></i>';
 $settings['navbar_items'] = array('toc', 'top', 'bottom', 'summary');
