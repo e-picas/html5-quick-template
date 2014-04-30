@@ -81,6 +81,13 @@ vitae congue odio elementum. Nullam hendrerit fringilla porttitor.
 </ul>
 <p>Etiam accumsan metus at diam vehicula, at blandit ligula laoreet. Donec tempus leo sit amet sodales eleifend. Cras sollicitudin eros a nisl aliquet, vitae congue odio elementum. Nullam hendrerit fringilla porttitor. Pellentesque sagittis, sem mollis viverra tempor, libero lacus euismod risus, sit amet facilisis nulla metus non magna. Maecenas lectus risus, tincidunt in fringilla non, bibendum vitae ante. Mauris pellentesque mi et leo rutrum vulputate. Mauris sodales pellentesque nibh, quis hendrerit magna dapibus eget. Curabitur in ante arcu. Sed ac mi ligula. Cras commodo pellentesque velit id gravida. Vestibulum eget sem quis magna elementum pulvinar. Nulla vitae magna libero. Nulla sodales massa tristique orci scelerisque volutpat. </p>
 <h3 id="title-2-2">Title 2.2</h3>
+<!-- this is to test the DOM IDs management of the template -->
+<a id="top"></a>
+<a id="bottom"></a>
+<a id="toc"></a>
+<a id="notes"></a>
+<a id="secondary-content-secondary-content-title"></a>
+<a id="secondary-content-0"></a>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin pulvinar dolor sit amet dui lacinia fringilla. Etiam ut iaculis risus. Sed volutpat mi eu dictum fermentum. Nunc nec tempor metus. Pellentesque eleifend risus quis volutpat consequat. Quisque pharetra, eros at hendrerit fermentum, lectus leo tincidunt justo, eu porta felis mi ut arcu. In sagittis congue neque, sit amet blandit diam convallis quis. Aenean varius nunc eget metus suscipit rutrum. Pellentesque condimentum, nibh ac vulputate lacinia, augue nibh tristique ante, sed scelerisque magna tortor nec arcu. Etiam quis feugiat urna, quis hendrerit libero. Aliquam non dignissim elit. Maecenas non aliquam nibh. Donec tincidunt, libero vel luctus mattis, ipsum dui malesuada magna, vel scelerisque arcu nulla id lacus. Fusce aliquet, dolor non suscipit bibendum, metus nisl tincidunt lectus, ut egestas magna dolor a ligula.</p>
 <blockquote>
 <p>Integer pulvinar elementum sem, at blandit sapien hendrerit a. Cras quis imperdiet massa, nec lacinia diam. Ut ultricies risus sit amet eros sodales convallis.</p>
