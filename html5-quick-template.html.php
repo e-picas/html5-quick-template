@@ -355,7 +355,7 @@ define('HQT_NAME', 'html5-quick-template');
 /**
  * @constant    Current version of the app
  */
-define('HQT_VERSION', '1.1.0-dev');
+define('HQT_VERSION', '1.1.0');
 
 /**
  * @constant    URL of the app repo
