@@ -680,7 +680,7 @@ $hqt_profiler_mode      = hqt_safestring(hqt_setting('profiler_mode'));
 $hqt_direction_left     = (hqt_setting('direction')==='rtl' ? 'right' : 'left');
 $hqt_direction_right    = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
 ?><!DOCTYPE html>
-<html lang="<?php echo hqt_safestring(hqt_setting('language')); ?>">
+<html lang="<?php echo hqt_safestring(hqt_setting('language')); ?>" dir="<?php echo hqt_setting('direction'); ?>">
 <head>
     <meta charset="<?php echo hqt_safestring(hqt_setting('charset')); ?>">
     <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
@@ -736,6 +736,9 @@ body.no-js ul.navbar-nav        { list-style-type: none; display: block; padding
 body.no-js ul.navbar-nav li     { display: inline; padding: 0; }
 body.no-js ul.navbar-nav li.hidden-no-js { display: none; }
 body.no-js ul.navbar-nav a      { text-decoration: none; }
+@media (min-width: 768px) {
+    .navbar-nav > li                { float: <?php echo $hqt_direction_left; ?>; }
+}
 @media (min-width: 768px) and (max-width: 991px) {
     aside, nav                      { max-width: 40%; }
     body.no-js aside, body.no-js nav{ max-width: 100%; }
