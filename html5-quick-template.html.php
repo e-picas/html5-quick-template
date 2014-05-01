@@ -25,26 +25,21 @@
 
 // debug & php settings
 //error_reporting(E_ALL | E_STRICT); ini_set('display_errors', 1);
-//ini_set('html_errors', 0); ini_set('xdebug.overload_var_dump', 0);
 
 // set a default timezone to avoid PHP5 warnings
-$hqt_dtmz = @date_default_timezone_get();
-@date_default_timezone_set($hqt_dtmz?:'Europe/London');
+$hqt_dtmz = @date_default_timezone_get(); @date_default_timezone_set($hqt_dtmz?:'Europe/London');
 
 // PHP 5.3 or greater required
-if (version_compare(phpversion(), '5.3.0', '<')) {
-    die('The HTML5 quick template requires at least PHP version [5.3.0]! (current version is ['.phpversion().'])');
-}
+if (version_compare(phpversion(), '5.3.0', '<')) { die('The HTML5 quick template requires at least PHP version [5.3.0]! (current version is ['.phpversion().'])'); }
 
-// shortcut to change the actual app mode (in 'dev' or 'prod')
-// uncomment this during development
+// shortcut to change the actual app mode (in 'dev' or 'prod') ; uncomment this during development
 //$hqt_app_mode_shortcut = 'dev';
 
 ################# USER VARIABLES #######################################################################################
 /*
  * Each of these variables are "typed" as `string`, `array` or `string|array`. This is mostly
  * an advice about how the variable is used but you can (quite safely) use strings or arrays
- * when you want. To disable a variable, just define it to `false`.
+ * when you want. To disable a variable, just define it to `false` or an empty string.
  */
 
 /**
@@ -78,8 +73,7 @@ if (!isset($update)) $update = null;
 if (!isset($notes)) $notes = array();
 
 /**
- * @var    string|array    The page table of contents like `id => title` or `id => items`
- *                         with items like `id => title` or as a raw string
+ * @var    string|array    The page table of contents like `id => title` or `id => items` recursively, or as a raw string
  */
 if (!isset($toc)) $toc = array();
 
@@ -361,7 +355,7 @@ function hqt_prepare($defaults = array(), $options = array(), $ln = array()) {
  * @return  void
  */
 function hqt_prepare_dom($content) {
-    if (0!==preg_match_all('~id=["\']([^"\']+)~i', $content, $matches) && isset($matches[1]) && !empty($matches[1])) {
+    if (0!==preg_match_all('~id=["\']([^"\']+)~i', hqt_safestring($content), $matches) && isset($matches[1]) && !empty($matches[1])) {
         foreach ($matches[1] as $id) { hqt_getid($id, true); }
     }
 }
@@ -637,6 +631,7 @@ hqt_prepare_dom($content);
 // dump env vars when calling this file 
 $hqt_arg_mode = (isset($_GET['mode']) ? $_GET['mode'] : null);
 if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) || $hqt_arg_mode!='empty')) {
+    @ini_set('html_errors', 1);
     ob_start();
     echo '<p class="lead">To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>.</p>';
     echo '<h2 id="links">Manuals</h2>';
@@ -647,14 +642,11 @@ if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) 
     $vars = get_defined_vars();
     foreach (array('GLOBALS', '_POST', '_GET', '_COOKIE', '_FILES', '_ENV', '_REQUEST', '_SERVER', 'php_errormsg') as $key) { if (array_key_exists($key, $vars)) unset($vars[$key]); }
     foreach ($vars as $k=>$v) { if (substr($k, 0, 3)=='hqt') unset($vars[$k]); }
-    ksort($vars, SORT_STRING);
-    var_dump($vars);
+    ksort($vars, SORT_STRING); var_dump($vars);
     echo '</pre><h2 id="opts">Default settings</h2><p>Dump of the default template settings you can overwrite in a personal <code>$settings</code> array.</p><pre>';
-    ksort($hqt_default_settings, SORT_STRING);
-    var_dump($hqt_default_settings);
+    ksort($hqt_default_settings, SORT_STRING); var_dump($hqt_default_settings);
     echo '</pre><h2 id="languages">Default language strings</h2><p>Dump of the default language strings you can overwrite in a personal <code>$settings["language_strings"]</code> array using the same indexes as below.</p><pre>';
-    ksort($hqt_language_strings, SORT_STRING);
-    var_dump($hqt_language_strings);
+    ksort($hqt_language_strings, SORT_STRING); var_dump($hqt_language_strings);
     echo '</pre><h2 id="dev">Development</h2><p>If you are working on the template source (from your own fork for instance), please note that you can set the <code>app_mode</code> on <kbd>dev</kbd> to get a profiler at the bottom of each page. A shortcut may be present at the top of the template script to enable the dev mode quickly. As this profiler is hidden by default, but present in the HTML source, you can add a <code>profiler=on</code> query argument to show it on load (<a href="?profiler=on">test on current URL</a>).</p><p>You can also test the rendering of an empty template (to validate it for instance) adding a <code>mode=empty</code> query argument (<a href="?mode=empty">test on current URL</a>).</p>';
     $content = ob_get_contents();
     ob_end_clean();
@@ -676,7 +668,7 @@ if (!empty($_headers) && is_array($_headers)) {
 }
 
 // rendering
-$hqt_profiler_mode      = hqt_safestring(hqt_setting('profiler_mode'));
+$hqt_profiler_mode      = hqt_setting('profiler_mode');
 $hqt_direction_left     = (hqt_setting('direction')==='rtl' ? 'right' : 'left');
 $hqt_direction_right    = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
 ?><!DOCTYPE html>
