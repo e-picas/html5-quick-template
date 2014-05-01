@@ -232,6 +232,7 @@ $settings['app_mode'] = 'dev';
 $settings['date_format'] = 'D-M-Y';
 $settings['brand_icon'] = '<i class="fa fa-html5"></i>';
 $settings['navbar_items'] = array('toc', 'top', 'bottom', 'summary');
+$settings['profiler_user_stack'] = 'test';
 $settings['language_strings'] = array();
 $settings['language_strings']['notes_block_header'] = 'Content Notes';
 //*/

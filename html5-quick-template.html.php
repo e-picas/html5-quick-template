@@ -366,7 +366,7 @@ function hqt_prepare($defaults = array(), $options = array(), $ln = array()) {
  */
 function hqt_prepare_dom($content) {
     if (0!==preg_match_all('~id=["\']([^"\']+)~i', $content, $matches) && isset($matches[1]) && !empty($matches[1])) {
-        foreach ($matches[1] as $i=>$id) { hqt_getid($id, true); }
+        foreach ($matches[1] as $id) { hqt_getid($id, true); }
     }
 }
 
@@ -397,6 +397,18 @@ function hqt_internal($var, $val = null, $default = null) {
         $val = array_key_exists($var, $hqt_settings) ? $hqt_settings[$var] : $default;
         return ((is_object($val) && ($val instanceof Closure)) ? hqt_callback($val, '') : $val);
     }
+}
+
+/**
+ * Set or get a unique DOM ID identified by `$name` for the template itself
+ *
+ * @param   string  $name The name of the ID to get
+ * @return  string
+ */
+function hqt_internalid($name) {
+    static $hqt_dom_internal_ids = array();
+    if (!array_key_exists($name, $hqt_dom_internal_ids)) $hqt_dom_internal_ids[$name] = hqt_getid($name, true);
+    return $hqt_dom_internal_ids[$name];
 }
 
 /**
@@ -436,6 +448,23 @@ function hqt_translate($str, $args = null) {
         }
     } elseif (!empty($args)) { $str .= ' ('.implode(' , ', $args).')'; }
     return $str;
+}
+
+/**
+ * Set or get a unique DOM ID identified by `$name`
+ *
+ * @param   string  $name The name of the ID to get
+ * @param   bool    $set  Force creation of a new ID
+ * @return  string
+ */
+function hqt_getid($name, $set = false) {
+    static $hqt_dom_ids = array();
+    if (!array_key_exists($name, $hqt_dom_ids) || $set===true) {
+        $id = hqt_slugify($name);
+        if (in_array($id, $hqt_dom_ids)) $id .= uniqid();
+        $hqt_dom_ids[$name] = $id;
+    }
+    return $hqt_dom_ids[$name];
 }
 
 /**
@@ -577,30 +606,16 @@ function hqt_make_list($items, $callback = null, $options = array()) {
     return $str;
 }
 
-/**
- * Set or get a unique DOM ID identified by `$name`
- *
- * @param   string  $name The name of the ID to get
- * @param   bool    $set  Force creation of a new ID
- * @return  string
- */
-function hqt_getid($name, $set = false) {
-    static $hqt_dom_ids = array();
-    if (!array_key_exists($name, $hqt_dom_ids) || $set===true) {
-        $id = hqt_slugify($name);
-        if (in_array($id, $hqt_dom_ids)) $id .= uniqid();
-        $hqt_dom_ids[$name] = $id;
-    }
-    return $hqt_dom_ids[$name];
-}
-
-
 ################# END OF INTERNAL API ##################################################################################
 
 ################# FINAL RENDERING ######################################################################################
 /*
  * The final rendering is built by direct output.
  * The HTML construction MUST NOT throw any error or exception.
+ * Any DOM ID MUST be get with `hqt_internalid()`.
+ * To allow "left-to-right" languages to use the template, you MUST use the following variables
+ * instead of raw "left" or "right" when necessary: `$hqt_direction_left` and `$hqt_direction_right`.
+ * Any language string MUST be get using `hqt_translate()`.
  */
 
 // env preparation
@@ -660,7 +675,7 @@ $hqt_direction_right    = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
     <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="<?php echo hqt_setting('libstylesheet_bootstrap'); ?>" rel="stylesheet">
-    <link href="<?php echo hqt_setting('libstylesheet_fontawesome'); ?>" rel="stylesheet" id="<?php echo hqt_getid('lib-fontawesome', true); ?>">
+    <link href="<?php echo hqt_setting('libstylesheet_fontawesome'); ?>" rel="stylesheet" id="<?php echo hqt_internalid('lib-fontawesome'); ?>">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -672,20 +687,20 @@ $hqt_direction_right    = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
     <meta name="description" content="<?php echo hqt_safestring($sub_title); ?>">
 <?php endif; ?>
 <?php if (!empty($author)) : ?>
-    <meta name="author" content="<?php echo hqt_safestring($author); ?>">
+    <meta name="author" content="<?php echo hqt_safestring($author, null, null, ', '); ?>">
 <?php endif; ?>
 <style>
 body                            { padding-top: 70px; direction: <?php echo hqt_setting('direction'); ?>; }
 .navbar .container              { width: 100%; }
 .wrapper                        { padding-bottom: 20px; }
 aside, nav                      { margin: 12px; padding: 12px 20px; border-radius: 6px; max-width: 20%; }
-aside#<?php echo hqt_getid('secondary-contents', true); ?>        { margin: 15px 20px; padding: 0; position: relative; }
+aside#<?php echo hqt_internalid('secondary-contents'); ?>        { margin: 15px 20px; padding: 0; position: relative; }
 .secondary-content              { margin: 2px; padding: 15px; border-radius: 4px; }
 .handler a                      { color: #777777; }
 aside, nav ul                   { padding-<?php echo $hqt_direction_left; ?>: 22px; }
 .footer                         { font-size: 85%; background-color: #f5f5f5; color: #333333; padding: 12px; border-radius: 6px; position: relative; }
 h3                              { padding-<?php echo $hqt_direction_left; ?>: .5em; }
-h4:not([id="<?php echo hqt_getid('toc', true); ?>"])              { padding-<?php echo $hqt_direction_left; ?>: 1em; }
+h4:not([id="<?php echo hqt_internalid('toc'); ?>"])              { padding-<?php echo $hqt_direction_left; ?>: 1em; }
 h5                              { padding-<?php echo $hqt_direction_left; ?>: 2em; }
 h6                              { padding-<?php echo $hqt_direction_left; ?>: 3em; }
 .footnotes                      { font-size: .9em; }
@@ -694,8 +709,8 @@ h6                              { padding-<?php echo $hqt_direction_left; ?>: 3e
 .bg-default                     { background-color: #f5f5f5; }
 .navbar-brand i                 { font-size: 22px; }
 form.navbar-form                { position: relative; }
-.navbar-form.navbar-right:last-child { margin-<?php echo $hqt_direction_right; ?>: 0px; }
-input#<?php echo hqt_getid('search-field', true); ?>              { padding-<?php echo $hqt_direction_right; ?>: 24px; }
+.navbar-form.navbar-<?php echo $hqt_direction_right; ?>:last-child { margin-<?php echo $hqt_direction_right; ?>: 0px; }
+input#<?php echo hqt_internalid('search-field'); ?>              { padding-<?php echo $hqt_direction_right; ?>: 24px; }
 span.search-icon, span.search-icon-alt                { position: absolute; display: block; top: 10px; <?php echo $hqt_direction_right; ?>: 24px; z-index: 100; cursor: pointer; }
 .dropdown-menu li > ul          { list-style-type: none; padding-<?php echo $hqt_direction_left; ?>: 24px; }
 .dropdown-menu li > ul li       { margin: 0px; }
@@ -716,7 +731,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
 }
 @media (max-width: 767px) {
     aside, nav                      { max-width: 100%; }
-    aside#<?php echo hqt_getid('secondary-contents'); ?>        { margin: 10px; }
+    aside#<?php echo hqt_internalid('secondary-contents'); ?>        { margin: 10px; }
     .secondary-content              { display: block; min-width: 100%; }
     span.search-icon                { top: 40px; }
     .responsive                     { width: 100%; overflow: auto; }
@@ -728,7 +743,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
 }
 @media print {
     body                       { font-size: 10pt; padding-top: 0; }
-    aside#<?php echo hqt_getid('secondary-contents-print', true); ?>        { margin: 1em 0; clear: both; display: block; min-width: 100% !important; font-size: .9em; }
+    aside#<?php echo hqt_internalid('secondary-contents-print'); ?>        { margin: 1em 0; clear: both; display: block; min-width: 100% !important; font-size: .9em; }
     .secondary-content         { border-top: 1px dotted #dddddd; }
     footer                     { margin-top: 1em; padding-top: 4px; border-top: 1px dotted #dddddd; font-size: .86em; }
 }
@@ -747,11 +762,11 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     </div>
     <![endif]-->
     <div class="alert alert-warning hidden"><?php echo hqt_translate('internet_connection_off'); ?></div>
-    <a id="<?php echo hqt_getid('top', true); ?>"></a>
+    <a id="<?php echo hqt_internalid('top'); ?>"></a>
     <div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header navbar-<?php echo $hqt_direction_left; ?> hidden-no-js">
-                <button id="<?php echo hqt_getid('main-navbar-handler', true); ?>" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="<?php echo hqt_translate('navigation_menu_title'); ?>">
+                <button id="<?php echo hqt_internalid('main-navbar-handler'); ?>" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="<?php echo hqt_translate('navigation_menu_title'); ?>">
                     <span class="sr-only"><?php echo hqt_translate('toggle_navigation'); ?></span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="<?php echo isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : ''); ?>">
@@ -761,19 +776,19 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
                     <?php echo hqt_safestring(hqt_setting('brand_title')); ?>
                 </a>
             </div>
-            <div id="<?php echo hqt_getid('main-navbar', true); ?>" class="navbar-collapse collapse">
+            <div id="<?php echo hqt_internalid('main-navbar'); ?>" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-<?php echo $hqt_direction_right; ?>">
 <?php if (!empty($toc) && @in_array('toc', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#<?php echo hqt_getid('toc'); ?>" title="<?php echo hqt_translate('toc_menu_item_title'); ?>"><i class="fa fa-book"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('toc_menu_item');; ?></span></a></li>
+                    <li><a href="#<?php echo hqt_internalid('toc'); ?>" title="<?php echo hqt_translate('toc_menu_item_title'); ?>"><i class="fa fa-book"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('toc_menu_item');; ?></span></a></li>
 <?php endif; ?>
 <?php if (!empty($notes) && @in_array('notes', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#<?php echo hqt_getid('notes', true); ?>" title="<?php echo hqt_translate('notes_menu_item_title'); ?>"><i class="fa fa-thumb-tack"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('notes_menu_item');; ?></span></a></li>
+                    <li><a href="#<?php echo hqt_internalid('notes'); ?>" title="<?php echo hqt_translate('notes_menu_item_title'); ?>"><i class="fa fa-thumb-tack"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('notes_menu_item');; ?></span></a></li>
 <?php endif; ?>
 <?php if (@in_array('top', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#<?php echo hqt_getid('top'); ?>" title="<?php echo hqt_translate('top_menu_item_title'); ?>"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('top_menu_item'); ?></span></a></li>
+                    <li><a href="#<?php echo hqt_internalid('top'); ?>" title="<?php echo hqt_translate('top_menu_item_title'); ?>"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('top_menu_item'); ?></span></a></li>
 <?php endif; ?>
 <?php if (@in_array('bottom', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#<?php echo hqt_getid('bottom', true); ?>" title="<?php echo hqt_translate('bottom_menu_item_title'); ?>"><i class="fa fa-angle-down"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('bottom_menu_item'); ?></span></a></li>
+                    <li><a href="#<?php echo hqt_internalid('bottom'); ?>" title="<?php echo hqt_translate('bottom_menu_item_title'); ?>"><i class="fa fa-angle-down"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('bottom_menu_item'); ?></span></a></li>
 <?php endif; ?>
 <?php if (@in_array('summary', hqt_setting('navbar_items')) && (!empty($secondary_contents) || !empty($toc))) : ?>
                     <li class="dropdown hidden-no-js">
@@ -794,7 +809,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     <?php endif; ?>
     <?php if (!empty($secondary_contents)) : ?>
         <?php foreach ($secondary_contents as $i => $_item) : $id = hqt_slugify($i); ?>
-                            <li><a href="#<?php echo hqt_getid('secondary-content-'.$id, true); ?>" title="<?php echo hqt_extract($_item); ?>"><?php echo (is_string($i) ? hqt_stringify($i) : hqt_extract($_item, hqt_setting('length_title'))); ?></a></li>
+                            <li><a href="#<?php echo hqt_internalid('secondary-content-'.$id); ?>" title="<?php echo hqt_extract($_item); ?>" class="anchor-to-collapsible"><?php echo (is_string($i) ? hqt_stringify($i) : hqt_extract($_item, hqt_setting('length_title'))); ?></a></li>
         <?php endforeach; ?>
     <?php endif; ?>
                         </ul>
@@ -803,26 +818,26 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
                     <li class="active"><?php echo hqt_safestring(hqt_setting('menu_item_content_stamp')); ?></li>
                 </ul>
                 <form class="navbar-form navbar-<?php echo $hqt_direction_right; ?> hidden-no-js" role="search">
-                    <span id="<?php echo hqt_getid('result-count', true); ?>" class="text-primary"></span>&nbsp;
-                    <span id="<?php echo hqt_getid('delete-search-alt', true); ?>" class="text-primary search-icon-alt visible-xs hidden">[<?php echo hqt_translate('search_field_mobile_clear'); ?>]</span>
-                    <input id="<?php echo hqt_getid('search-field'); ?>" class="form-control" type="search" tabindex="1" placeholder="<?php echo hqt_translate('search_field_placeholder'); ?>" title="<?php echo hqt_translate('search_field_title'); ?>">
-                    <span id="<?php echo hqt_getid('icon-search', true); ?>" class="search-icon fa fa-search"></span>
-                    <span id="<?php echo hqt_getid('delete-search', true); ?>" class="text-primary search-icon fa fa-times hidden" title="<?php echo hqt_translate('search_field_clear_title'); ?>"></span>
+                    <span id="<?php echo hqt_internalid('result-count'); ?>" class="text-primary"></span>&nbsp;
+                    <span id="<?php echo hqt_internalid('delete-search-alt'); ?>" class="text-primary search-icon-alt visible-xs hidden">[<?php echo hqt_translate('search_field_mobile_clear'); ?>]</span>
+                    <input id="<?php echo hqt_internalid('search-field'); ?>" class="form-control" type="search" tabindex="1" placeholder="<?php echo hqt_translate('search_field_placeholder'); ?>" title="<?php echo hqt_translate('search_field_title'); ?>">
+                    <span id="<?php echo hqt_internalid('icon-search'); ?>" class="search-icon fa fa-search"></span>
+                    <span id="<?php echo hqt_internalid('delete-search'); ?>" class="text-primary search-icon fa fa-times hidden" title="<?php echo hqt_translate('search_field_clear_title'); ?>"></span>
                 </form>
             </div>
         </div>
     </div>
-    <div id="<?php echo hqt_getid('wrapper', true); ?>" class="wrapper container-fluid">
+    <div id="<?php echo hqt_internalid('wrapper'); ?>" class="wrapper container-fluid">
 <?php if (!empty($secondary_contents)) : ?>
-        <aside id="<?php echo hqt_getid('secondary-contents'); ?>" class="hidden-print pull-<?php echo $hqt_direction_right; ?>">
+        <aside id="<?php echo hqt_internalid('secondary-contents'); ?>" class="hidden-print pull-<?php echo $hqt_direction_right; ?>">
     <?php foreach ($secondary_contents as $i => $_item) : $id = hqt_slugify($i); ?>
             <div class="secondary-content bg-default">
                 <p class="text-muted handler">
-                    <a class="no-hash" data-toggle="collapse" href="#<?php echo hqt_getid('secondary-content-'.$id); ?>" onClick="$(this).find('i').toggleClass('fa-angle-up').toggleClass('fa-angle-down');" data-jqtitle="<?php echo hqt_translate('secondary_block_handler_title'); ?>">
+                    <a class="no-hash" data-toggle="collapse" href="#<?php echo hqt_internalid('secondary-content-'.$id); ?>" onClick="$(this).find('i').toggleClass('fa-angle-up').toggleClass('fa-angle-down');" data-jqtitle="<?php echo hqt_translate('secondary_block_handler_title'); ?>">
                         <i class="fa fa-angle-up"></i>&nbsp;<?php echo ($id != (string) $i) ? hqt_stringify($i) : hqt_translate('show_hide'); ?>
                     </a>
                 </p>
-                <div id="<?php echo hqt_getid('secondary-content-'.$id); ?>" class="collapse in">
+                <div id="<?php echo hqt_internalid('secondary-content-'.$id); ?>" class="collapse in">
                     <?php echo hqt_safestring($_item); ?>
                 </div>
             </div>
@@ -839,7 +854,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
 <?php if (!empty($toc)) : ?>
             <nav class="bg-info <?php echo (!empty($secondary_contents)) ? 'pull-'.$hqt_direction_left : 'pull-'.$hqt_direction_right; ?> hidden-print">
     <?php $block_title_toc = hqt_translate('toc_block_header'); if (!empty($block_title_toc)) : ?>
-                <h4 id="<?php echo hqt_getid('toc'); ?>"><?php echo hqt_safestring($block_title_toc); ?></h4>
+                <h4 id="<?php echo hqt_internalid('toc'); ?>"><?php echo hqt_safestring($block_title_toc); ?></h4>
     <?php endif; ?>
                 <?php echo hqt_make_list($toc, array('hqt_stringify','ucfirst'), array(
                     'mask_list' => hqt_setting('mask_list_toc'),
@@ -855,7 +870,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
             <footer>
                 <div class="footnotes">
     <?php $block_title_notes = hqt_translate('notes_block_header'); if (!empty($block_title_notes)) : ?>
-                    <h4 id="<?php echo hqt_getid('notes'); ?>"><?php echo hqt_safestring($block_title_notes); ?></h4>
+                    <h4 id="<?php echo hqt_internalid('notes'); ?>"><?php echo hqt_safestring($block_title_notes); ?></h4>
     <?php endif; ?>
                     <?php echo hqt_make_list($notes, array('hqt_stringify'), array(
                         'mask_list' => hqt_setting('mask_list_notes'),
@@ -887,7 +902,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
 <?php endif; ?>
         </article>
 <?php if (!empty($secondary_contents)) : ?>
-        <aside id="<?php echo hqt_getid('secondary-contents-print'); ?>" class="visible-print"></aside>
+        <aside id="<?php echo hqt_internalid('secondary-contents-print'); ?>" class="visible-print"></aside>
         <div class="clearfix visible-xs"></div>
 <?php endif; ?>
         <footer>
@@ -899,23 +914,23 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
                     <?php echo hqt_translate('footer_info_app', array(HQT_HOME, HQT_NAME.' '.HQT_VERSION, HQT_NAME)); ?><br><?php echo hqt_translate('footer_info_dependencies'); ?>
                 </div>
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
-                <div id="<?php echo hqt_getid('hqt-profiler', true); ?>" class="pull-<?php echo $hqt_direction_left; ?> responsive hidden-print">
+                <div id="<?php echo hqt_internalid('hqt-profiler'); ?>" class="pull-<?php echo $hqt_direction_left; ?> responsive hidden-print">
                     <div class="clearfix visible-xs"><br /></div>
                     <div class="profiler">
                         <ul class="nav nav-pills">
-                            <li class="handler"><a class="no-hash" data-toggle="collapse" href="#<?php echo hqt_getid('profiler', true); ?>" data-jqtitle="<?php echo hqt_translate('profiler_button_title'); ?>"><i class="fa fa-cogs"></i>&nbsp;<?php echo hqt_translate('profiler_button'); ?></a></li>
+                            <li class="handler"><a class="no-hash" data-toggle="collapse" href="#<?php echo hqt_internalid('profiler'); ?>" data-jqtitle="<?php echo hqt_translate('profiler_button_title'); ?>"><i class="fa fa-cogs"></i>&nbsp;<?php echo hqt_translate('profiler_button'); ?></a></li>
                         </ul>
-                        <div id="<?php echo hqt_getid('profiler'); ?>" class="collapse">
+                        <div id="<?php echo hqt_internalid('profiler'); ?>" class="collapse">
                             <dl class="dl-horizontal">
-                                <dt><?php echo hqt_translate('profiler_request'); ?></dt><dd><a id="<?php echo hqt_getid('profiler-request', true); ?>" class="insert-request"></a></dd>
-                                <dt><?php echo hqt_translate('profiler_apps'); ?></dt><dd id="<?php echo hqt_getid('profiler-apps', true); ?>"><?php echo HQT_NAME.' '.HQT_VERSION; ?></dd>
-                                <dt><?php echo hqt_translate('profiler_date'); ?></dt><dd id="<?php echo hqt_getid('profiler-date', true); ?>"><?php echo date('c'); ?> (<?php echo @date_default_timezone_get(); ?>)</dd>
-                                <dt><?php echo hqt_translate('profiler_user_agent'); ?></dt><dd id="<?php echo hqt_getid('profiler-user-agent', true); ?>"></dd>
-                                <dt><?php echo hqt_translate('profiler_server_os'); ?></dt><dd id="<?php echo hqt_getid('profiler-server', true); ?>"><?php echo php_uname(); ?></dd>
-    <?php $profiler = hqt_setting('profiler_user_stack'); if (!empty($profiler)) : ?>
+                                <dt><?php echo hqt_translate('profiler_request'); ?></dt><dd><a id="<?php echo hqt_internalid('profiler-request'); ?>" class="insert-request"></a></dd>
+                                <dt><?php echo hqt_translate('profiler_apps'); ?></dt><dd id="<?php echo hqt_internalid('profiler-apps'); ?>"><?php echo HQT_NAME.' '.HQT_VERSION; ?></dd>
+                                <dt><?php echo hqt_translate('profiler_date'); ?></dt><dd id="<?php echo hqt_internalid('profiler-date'); ?>"><?php echo date('c'); ?> (<?php echo @date_default_timezone_get(); ?>)</dd>
+                                <dt><?php echo hqt_translate('profiler_user_agent'); ?></dt><dd id="<?php echo hqt_internalid('profiler-user-agent'); ?>"></dd>
+                                <dt><?php echo hqt_translate('profiler_server_os'); ?></dt><dd id="<?php echo hqt_internalid('profiler-server'); ?>"><?php echo php_uname(); ?></dd>
+    <?php $profiler = hqt_setting('profiler_user_stack'); if (!empty($profiler)) : if (!is_array($profiler)) $profiler = array($profiler); ?>
         <?php foreach ($profiler as $var=>$val) : ?>
                                 <dt><?php echo (is_string($var) ? hqt_safestring($var) : ''); ?></dt>
-                                <dd id="<?php echo hqt_getid('profiler-'.hqt_slugify($var), true); ?>"><?php echo hqt_safestring($val); ?></dd>
+                                <dd id="<?php echo hqt_internalid('profiler-'.hqt_slugify($var)); ?>"><?php echo hqt_safestring($val); ?></dd>
         <?php endforeach; ?>
     <?php endif; ?>
                             </dl>
@@ -927,21 +942,22 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
             </div>
         </footer>
         <footer class="visible-print">
-            <p class="small"><?php echo hqt_translate('footer_print_info'); ?>: <span id="<?php echo hqt_getid('printer-request', true); ?>"></span></p>
+            <p class="small"><?php echo hqt_translate('footer_print_info'); ?>: <span id="<?php echo hqt_internalid('printer-request'); ?>"></span></p>
         </footer>
     </div>
     <div class="clearfix"></div>
-    <a id="<?php echo hqt_getid('bottom'); ?>"></a>
-    <script src="<?php echo hqt_setting('libscript_jquery'); ?>" id="<?php echo hqt_getid('lib-jquery', true); ?>"></script>
-    <script src="<?php echo hqt_setting('libscript_bootstrap'); ?>" id="<?php echo hqt_getid('lib-bootstrap', true); ?>'"></script>
+    <a id="<?php echo hqt_internalid('bottom'); ?>"></a>
+    <script src="<?php echo hqt_setting('libscript_jquery'); ?>" id="<?php echo hqt_internalid('lib-jquery'); ?>"></script>
+    <script src="<?php echo hqt_setting('libscript_bootstrap'); ?>" id="<?php echo hqt_internalid('lib-bootstrap'); ?>'"></script>
 <script>
-var _query = document.location.search.substr(1);
+var _query          = document.location.search.substr(1);
+var _searchString   = _query.substr(_query.indexOf("search=")).split("&")[0].split("=")[1];
 
-document.getElementById("<?php echo hqt_getid('printer-request'); ?>").innerHTML     = document.location.href;
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
-document.getElementById("<?php echo hqt_getid('profiler-user-agent'); ?>").innerHTML = navigator.userAgent;
-document.getElementById("<?php echo hqt_getid('profiler-request'); ?>").innerHTML    = document.location.href;
+document.getElementById("<?php echo hqt_internalid('profiler-user-agent'); ?>").innerHTML = navigator.userAgent;
+document.getElementById("<?php echo hqt_internalid('profiler-request'); ?>").innerHTML    = document.location.href;
 <?php endif; ?>
+document.getElementById("<?php echo hqt_internalid('printer-request'); ?>").innerHTML     = document.location.href;
 
 /*
 highlight v4 - Highlights arbitrary terms - MIT license - Johann Burkard
@@ -949,102 +965,100 @@ highlight v4 - Highlights arbitrary terms - MIT license - Johann Burkard
 */
 jQuery.fn.highlight=function(c){function e(b,c){var d=0;if(3==b.nodeType){var a=b.data.toUpperCase().indexOf(c);if(0<=a){d=document.createElement("span");d.className="highlight";a=b.splitText(a);a.splitText(c.length);var f=a.cloneNode(!0);d.appendChild(f);a.parentNode.replaceChild(d,a);d=1}}else if(1==b.nodeType&&b.childNodes&&!/(script|style)/i.test(b.tagName))for(a=0;a<b.childNodes.length;++a)a+=e(b.childNodes[a],c);return d}return this.length&&c&&c.length?this.each(function(){e(this,c.toUpperCase())}): this};jQuery.fn.removeHighlight=function(){return this.find("span.highlight").each(function(){this.parentNode.firstChild.nodeName;with(this.parentNode)replaceChild(this.firstChild,this),normalize()}).end()};
 
+function getScriptVersion(script_id) {
+    var script = $("#"+script_id), script_src = script.attr("src"), script_href = script.attr("href"),
+        matcher = new RegExp(/\d+(?:\.\d+)+/g), vers = null;
+    if (script_src!==undefined && script_src.length) {
+        vers = script_src.match(matcher);
+    } else if (script_href!==undefined && script_href.length) {
+        vers = script_href.match(matcher);
+    }
+    return vers;
+}
+function clearSearchField() {
+    $("#<?php echo hqt_internalid('search-field'); ?>").val("");
+    $("#<?php echo hqt_internalid('icon-search'); ?>").removeClass("hidden");
+    $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").addClass("hidden");
+    $("#<?php echo hqt_internalid('wrapper'); ?>").removeHighlight();
+    $("#<?php echo hqt_internalid('result-count'); ?>").text("");
+    if (_searchString) { document.location.href = document.location.href.replace("search="+_searchString, ''); }
+}
+function scrollToAnchor(href) {
+    href = typeof(href) == "string" ? href : $(this).attr("href");
+    if (!href) return;
+    if (href.charAt(0) == "#") {
+        var $target = $(href);
+        if ($target.length) {
+            $('html, body').animate({ scrollTop: $target.offset().top - 70 }, "slow");
+            if (history && "pushState" in history) { history.pushState({}, document.title, window.location.pathname + href); }
+        }
+    }
+}
+function scrollToAnchorCollapsible(el) {
+    var tgt = $($(el).attr("href"));
+    if (tgt && !tgt.hasClass("in")) { tgt.collapse('show'); }
+}
+function closeNavbarMenu() {
+    if ($("#<?php echo hqt_internalid('main-navbar-handler'); ?>").is(':visible')) { $("#<?php echo hqt_internalid('main-navbar-handler'); ?>").trigger('click'); }
+}
+
 $(function() {
-    var _searchString = _query.substr(_query.indexOf("search=")).split("&")[0].split("=")[1];
-    function getScriptVersion(script_id) {
-        var script = $("#"+script_id),
-            script_src = script.attr("src"),
-            script_href = script.attr("href"),
-            matcher = new RegExp(/\d+(?:\.\d+)+/g),
-            str, vers = null;
-        if (script_src!==undefined && script_src.length) {
-            vers = script_src.match(matcher);
-        } else if (script_href!==undefined && script_href.length) {
-            vers = script_href.match(matcher);
-        }
-        return vers;
-    }
-    function clearSearchField() {
-        $("#<?php echo hqt_getid('search-field'); ?>").val("");
-        $("#<?php echo hqt_getid('icon-search'); ?>").removeClass("hidden");
-        $("#<?php echo hqt_getid('delete-search'); ?>, #<?php echo hqt_getid('delete-search-alt'); ?>").addClass("hidden");
-        $("#<?php echo hqt_getid('wrapper'); ?>").removeHighlight();
-        $("#<?php echo hqt_getid('result-count'); ?>").text("");
-        if (_searchString) document.location.href = document.location.href.replace("search="+_searchString, '');
-    }
-    function scrollToAnchor(href) {
-        href = typeof(href) == "string" ? href : $(this).attr("href");
-        if (!href) return;
-        if (href.charAt(0) == "#") {
-            var $target = $(href);
-            if ($target.length) {
-                $('html, body').animate({ scrollTop: $target.offset().top - 70 }, "slow");
-                if (history && "pushState" in history) {
-                    history.pushState({}, document.title, window.location.pathname + href);
-                }
-            }
-        }
-    }
-    function closeNavbarMenu() {
-        if ($("#<?php echo hqt_getid('main-navbar-handler'); ?>").is(':visible')) $("#<?php echo hqt_getid('main-navbar-handler'); ?>").trigger('click');
-    }
     $("body").removeClass("no-js");
     window.onbeforeprint = function() {
-        var _sc_original = $("#<?php echo hqt_getid('secondary-contents'); ?>"),
-            _sc_target = $("#<?php echo hqt_getid('secondary-contents-print'); ?>");
-        if (_sc_original) _sc_target.html(_sc_original.html());
+        var _sc_original = $("#<?php echo hqt_internalid('secondary-contents'); ?>"), _sc_target = $("#<?php echo hqt_internalid('secondary-contents-print'); ?>");
+        if (_sc_original) { _sc_target.html(_sc_original.html()); }
     };
     window.onafterprint = function() {
-        var _sc_target = $("#<?php echo hqt_getid('secondary-contents-print'); ?>");
-        if (_sc_target) _sc_target.html("");
+        var _sc_target = $("#<?php echo hqt_internalid('secondary-contents-print'); ?>");
+        if (_sc_target) { _sc_target.html(""); }
     };
-    $("a:not(.no-hash)").on("click", scrollToAnchor);
+    $("a:not(.no-hash, .anchor-to-collapsible)").on("click", scrollToAnchor);
+    $("a.anchor-to-collapsible").on("click", function(){ scrollToAnchorCollapsible($(this)); scrollToAnchor($(this).attr("href")); });
     $("#main-navbar a:not(.dropdown-toggle)").on("click", closeNavbarMenu);
+    $("[data-jqtitle]").each(function(i,el){ $(this).attr("title", $(this).attr("data-jqtitle")); });
+    $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").click(function() { clearSearchField(); });
+    $(document).keyup(function(e) { if (e.keyCode == 27) { clearSearchField(); } });
+    $("#<?php echo hqt_internalid('delete-search'); ?>").attr("title", $("#<?php echo hqt_internalid('delete-search'); ?>").attr("title")+" [ESC]");
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
-    $("#<?php echo hqt_getid('profiler-apps'); ?>").html(
-        $("#<?php echo hqt_getid('profiler-apps'); ?>").html()
+    $("#<?php echo hqt_internalid('profiler-apps'); ?>").html(
+        $("#<?php echo hqt_internalid('profiler-apps'); ?>").html()
         +" | jQuery "+jQuery.fn.jquery
-        +" | Bootstrap "+getScriptVersion("<?php echo hqt_getid('lib-bootstrap'); ?>")
-        +" | FontAwesome "+getScriptVersion("<?php echo hqt_getid('lib-fontawesome'); ?>")
+        +" | Bootstrap "+getScriptVersion("<?php echo hqt_internalid('lib-bootstrap'); ?>")
+        +" | FontAwesome "+getScriptVersion("<?php echo hqt_internalid('lib-fontawesome'); ?>")
     );
     var _profilerString = _query.substr(_query.indexOf("profiler=")).split("&")[0].split("=")[1];
     <?php if ($hqt_profiler_mode=='hidden') : ?>
-    if (_profilerString==undefined || _profilerString!='on') $("#<?php echo hqt_getid('hqt-profiler'); ?>").hide();
+    if (_profilerString==undefined || _profilerString!='on') { $("#<?php echo hqt_internalid('hqt-profiler'); ?>").hide(); }
     <?php endif; ?>
     <?php if (in_array($hqt_profiler_mode, array('on','hidden'))) : ?>
-    if (_profilerString && _profilerString=='off') $("#<?php echo hqt_getid('hqt-profiler'); ?>").hide();
+    if (_profilerString && _profilerString=='off') { $("#<?php echo hqt_internalid('hqt-profiler'); ?>").hide(); }
     <?php endif; ?>
 <?php endif; ?>
-    $("[data-jqtitle]").each(function(i,el){ $(this).attr("title", $(this).attr("data-jqtitle")); });
-    $("#<?php echo hqt_getid('delete-search'); ?>, #<?php echo hqt_getid('delete-search-alt'); ?>").click(function() { clearSearchField(); });
-    $(document).keyup(function(e) { if (e.keyCode == 27) { clearSearchField(); } });
     var searchField = {};
-    searchField.input = $("#<?php echo hqt_getid('search-field'); ?>");
+    searchField.input = $("#<?php echo hqt_internalid('search-field'); ?>");
     searchField.performSearch = function() {
-        $("#<?php echo hqt_getid('icon-search'); ?>").removeClass("hidden");
-        $("#<?php echo hqt_getid('delete-search'); ?>, #<?php echo hqt_getid('delete-search-alt'); ?>").addClass("hidden");
-        var phrase = searchField.input.val().replace(/^\s+|\s+$/g, ""),
-            count = 0, matches, phrase_regex;
+        $("#<?php echo hqt_internalid('icon-search'); ?>").removeClass("hidden");
+        $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").addClass("hidden");
+        $("#<?php echo hqt_internalid('wrapper'); ?>").removeHighlight();
+        var phrase = searchField.input.val().replace(/^\s+|\s+$/g, ""), count=0, matches, phrase_regex;
         phrase = phrase.replace(/\s+/g, "|");
-        $("#<?php echo hqt_getid('wrapper'); ?>").removeHighlight();
         if (phrase.length == 0) { clearSearchField(); return; }
         if (phrase.length < 3) { return; }
-        $("#<?php echo hqt_getid('icon-search'); ?>").addClass("hidden");
-        $("#<?php echo hqt_getid('delete-search'); ?>, #<?php echo hqt_getid('delete-search-alt'); ?>").removeClass("hidden");
+        $("#<?php echo hqt_internalid('icon-search'); ?>").addClass("hidden");
+        $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").removeClass("hidden");
         phrase_regex = ["\\b(", phrase, ")"].join("");
-        matches = $("#<?php echo hqt_getid('wrapper'); ?>").html().match(new RegExp(phrase_regex, "gi"));
+        matches = $("#<?php echo hqt_internalid('wrapper'); ?>").html().match(new RegExp(phrase_regex, "gi"));
         count = matches ? (matches.length) : 0;
-        $("#<?php echo hqt_getid('wrapper'); ?>").highlight(phrase);
-        $("#<?php echo hqt_getid('result-count'); ?>").text(count + " <?php echo hqt_translate('results'); ?>");
+        $("#<?php echo hqt_internalid('wrapper'); ?>").highlight(phrase);
+        $("#<?php echo hqt_internalid('result-count'); ?>").text(count + " <?php echo hqt_translate('results'); ?>");
         searchField.search = null;
     };
     searchField.input.keyup(function(e) {
         if (searchField.search) { clearTimeout(searchField.search); }
         searchField.search = setTimeout(searchField.performSearch, 300);
     });
-    $("#<?php echo hqt_getid('delete-search'); ?>").attr("title", $("#<?php echo hqt_getid('delete-search'); ?>").attr("title")+" [ESC]");
     if (_searchString) {
-        $("#<?php echo hqt_getid('search-field'); ?>").val(_searchString).select().focus();
+        $("#<?php echo hqt_internalid('search-field'); ?>").val(_searchString).select().focus();
         searchField.performSearch();
     } else {
         searchField.search;
