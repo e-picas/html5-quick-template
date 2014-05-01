@@ -273,6 +273,7 @@ $hqt_language_strings = array(
     'author_info' => 'Content authored by %s.&nbsp;',
     'bottom_menu_item' => 'Bottom',
     'bottom_menu_item_title' => 'reach the bottom of this page',
+    'brand_button_title' => '(re)fresh this page',
     'footer_info_app' => 'Page generated from an <a href="%s" title="%s">%s</a>.',
     'footer_info_dependencies' => 'Page built with the help of open source stuff such as <a href="http://jquery.com/" title="jquery.com">jQuery</a>, <a href="http://getbootstrap.com/" title="getbootstrap.com">Bootstrap</a> and <a href="http://fortawesome.github.io/Font-Awesome" title="fortawesome.github.io/Font-Awesome">Font Awesome</a>.',
     'footer_print_info' => 'Together, have a responsible approach: do not print this page unless necessary.<br>This page comes from the Internet at',
@@ -436,7 +437,7 @@ function hqt_translate($str, $args = null) {
             array_unshift($args, $str);
             $str = call_user_func_array('sprintf', $args);
         }
-    } elseif (!empty($args)) { $str .= ' ('.implode(' , ', $args).')'; }
+    } elseif (!empty($args)) { $str = hqt_stringify($str).' ('.implode(' , ', $args).')'; }
     return $str;
 }
 
@@ -499,7 +500,6 @@ function hqt_safestring($what, $mask = null, $callback = null, $items_glue = ' '
  * @param    null|callable  $callback    A callback method to finally transform the string
  * @setting  mask_default                Default mask used if `$str` is a simple string
  * @return   string
- * @see      hqt_safestring()
  */
 function hqt_safestringifarray($what, $mask = null, $callback = null) {
     return (is_array($what) ? hqt_safestring($what, $mask, $callback) : hqt_safestring($what, hqt_setting('mask_default'), $callback));
@@ -631,6 +631,7 @@ hqt_prepare_dom($content);
 // dump env vars when calling this file 
 $hqt_arg_mode = (isset($_GET['mode']) ? $_GET['mode'] : null);
 if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) || $hqt_arg_mode!='empty')) {
+    $hqt_is_manual = true;
     @ini_set('html_errors', 1);
     ob_start();
     echo '<p class="lead">To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>.</p>';
@@ -729,7 +730,7 @@ body.no-js ul.navbar-nav li     { display: inline; padding: 0; }
 body.no-js ul.navbar-nav li.hidden-no-js { display: none; }
 body.no-js ul.navbar-nav a      { text-decoration: none; }
 @media (min-width: 768px) {
-    .navbar-nav > li                { float: <?php echo $hqt_direction_left; ?>; }
+    body:not([class="no-js"]) .navbar-nav > li { float: <?php echo $hqt_direction_left; ?>; }
 }
 @media (min-width: 768px) and (max-width: 991px) {
     aside, nav                      { max-width: 40%; }
@@ -775,7 +776,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
                 <button id="<?php echo hqt_internalid('main-navbar-handler'); ?>" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="<?php echo hqt_translate('navigation_menu_title'); ?>">
                     <span class="sr-only"><?php echo hqt_translate('toggle_navigation'); ?></span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="<?php echo isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : ''); ?>">
+                <a class="navbar-brand" href="<?php echo isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : ''); ?>" title="<?php echo hqt_translate('brand_button_title'); ?>">
                     <?php $icon = hqt_setting('brand_icon'); if (!empty($icon)) : ?>
                         <?php echo is_array($icon) ? $icon[array_rand($icon)] : $icon;?>&nbsp;
                     <?php endif; ?>
@@ -907,6 +908,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
             </p></footer>
 <?php endif; ?>
         </article>
+        <div class="clearfix"></div>
 <?php if (!empty($secondary_contents)) : ?>
         <aside id="<?php echo hqt_internalid('secondary-contents-print'); ?>" class="visible-print"></aside>
         <div class="clearfix visible-xs"></div>
@@ -954,62 +956,61 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     <div class="clearfix"></div>
     <a id="<?php echo hqt_internalid('bottom'); ?>"></a>
     <script src="<?php echo hqt_setting('libscript_jquery'); ?>" id="<?php echo hqt_internalid('lib-jquery'); ?>"></script>
-    <script src="<?php echo hqt_setting('libscript_bootstrap'); ?>" id="<?php echo hqt_internalid('lib-bootstrap'); ?>'"></script>
+    <script src="<?php echo hqt_setting('libscript_bootstrap'); ?>" id="<?php echo hqt_internalid('lib-bootstrap'); ?>"></script>
 <script>
 var _query          = document.location.search.substr(1);
 var _searchString   = _query.substr(_query.indexOf("search=")).split("&")[0].split("=")[1];
-
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
 document.getElementById("<?php echo hqt_internalid('profiler-user-agent'); ?>").innerHTML = navigator.userAgent;
 document.getElementById("<?php echo hqt_internalid('profiler-request'); ?>").innerHTML    = document.location.href;
 <?php endif; ?>
 document.getElementById("<?php echo hqt_internalid('printer-request'); ?>").innerHTML     = document.location.href;
-
-/*
-highlight v4 - Highlights arbitrary terms - MIT license - Johann Burkard
-<http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html>
-*/
-jQuery.fn.highlight=function(c){function e(b,c){var d=0;if(3==b.nodeType){var a=b.data.toUpperCase().indexOf(c);if(0<=a){d=document.createElement("span");d.className="highlight";a=b.splitText(a);a.splitText(c.length);var f=a.cloneNode(!0);d.appendChild(f);a.parentNode.replaceChild(d,a);d=1}}else if(1==b.nodeType&&b.childNodes&&!/(script|style)/i.test(b.tagName))for(a=0;a<b.childNodes.length;++a)a+=e(b.childNodes[a],c);return d}return this.length&&c&&c.length?this.each(function(){e(this,c.toUpperCase())}): this};jQuery.fn.removeHighlight=function(){return this.find("span.highlight").each(function(){this.parentNode.firstChild.nodeName;with(this.parentNode)replaceChild(this.firstChild,this),normalize()}).end()};
-
 function getScriptVersion(script_id) {
     var script = $("#"+script_id), script_src = script.attr("src"), script_href = script.attr("href"),
         matcher = new RegExp(/\d+(?:\.\d+)+/g), vers = null;
-    if (script_src!==undefined && script_src.length) {
-        vers = script_src.match(matcher);
-    } else if (script_href!==undefined && script_href.length) {
-        vers = script_href.match(matcher);
-    }
+    if (script_src!==undefined && script_src.length) vers = script_src.match(matcher);
+    else if (script_href!==undefined && script_href.length) vers = script_href.match(matcher);
     return vers;
 }
-function clearSearchField() {
-    $("#<?php echo hqt_internalid('search-field'); ?>").val("");
+function clearSearchField(full) {
+    if (full) {
+        $("#<?php echo hqt_internalid('search-field'); ?>").val("");
+        $("#<?php echo hqt_internalid('result-count'); ?>").text("");
+        if (_searchString) { document.location.href = document.location.href.replace("search="+_searchString, ''); }
+    }
     $("#<?php echo hqt_internalid('icon-search'); ?>").removeClass("hidden");
     $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").addClass("hidden");
     $("#<?php echo hqt_internalid('wrapper'); ?>").removeHighlight();
-    $("#<?php echo hqt_internalid('result-count'); ?>").text("");
-    if (_searchString) { document.location.href = document.location.href.replace("search="+_searchString, ''); }
 }
 function scrollToAnchor(href) {
     href = typeof(href) == "string" ? href : $(this).attr("href");
-    if (!href) return;
-    if (href.charAt(0) == "#") {
-        var $target = $(href);
-        if ($target.length) {
+    if (!href) return; if (href.charAt(0) == "#") {
+        var $target = $(href); if ($target.length) {
             $('html, body').animate({ scrollTop: $target.offset().top - 70 }, "slow");
             if (history && "pushState" in history) { history.pushState({}, document.title, window.location.pathname + href); }
         }
     }
 }
 function scrollToAnchorCollapsible(el) {
-    var tgt = $($(el).attr("href"));
-    if (tgt && !tgt.hasClass("in")) { tgt.collapse('show'); }
+    var tgt = $($(el).attr("href")); if (tgt && !tgt.hasClass("in")) { tgt.collapse('show'); }
 }
 function closeNavbarMenu() {
     if ($("#<?php echo hqt_internalid('main-navbar-handler'); ?>").is(':visible')) { $("#<?php echo hqt_internalid('main-navbar-handler'); ?>").trigger('click'); }
 }
 
+/*
+ highlight v4 - Highlights arbitrary terms - MIT license - Johann Burkard
+ <http://johannburkard.de/blog/programming/javascript/highlight-javascript-text-higlighting-jquery-plugin.html>
+ */
+jQuery.fn.highlight=function(c){function e(b,c){var d=0;if(3==b.nodeType){var a=b.data.toUpperCase().indexOf(c);if(0<=a){d=document.createElement("span");d.className="highlight";a=b.splitText(a);a.splitText(c.length);var f=a.cloneNode(!0);d.appendChild(f);a.parentNode.replaceChild(d,a);d=1}}else if(1==b.nodeType&&b.childNodes&&!/(script|style)/i.test(b.tagName))for(a=0;a<b.childNodes.length;++a)a+=e(b.childNodes[a],c);return d}return this.length&&c&&c.length?this.each(function(){e(this,c.toUpperCase())}): this};jQuery.fn.removeHighlight=function(){return this.find("span.highlight").each(function(){this.parentNode.firstChild.nodeName;with(this.parentNode)replaceChild(this.firstChild,this),normalize()}).end()};
+
 $(function() {
     $("body").removeClass("no-js");
+    $("*").each(function(i,el){
+        $.each(el.attributes, function(j,attr) {
+            if(attr.name.indexOf("data-jq-") == 0) { $(el).attr(attr.name.replace("data-jq-", ""), $(el).attr(attr.name)); $(el).attr(attr.name, ""); }
+        });
+    });
     window.onbeforeprint = function() {
         var _sc_original = $("#<?php echo hqt_internalid('secondary-contents'); ?>"), _sc_target = $("#<?php echo hqt_internalid('secondary-contents-print'); ?>");
         if (_sc_original) { _sc_target.html(_sc_original.html()); }
@@ -1021,10 +1022,6 @@ $(function() {
     $("a:not(.no-hash, .anchor-to-collapsible)").on("click", scrollToAnchor);
     $("a.anchor-to-collapsible").on("click", function(){ scrollToAnchorCollapsible($(this)); scrollToAnchor($(this).attr("href")); });
     $("#main-navbar a:not(.dropdown-toggle)").on("click", closeNavbarMenu);
-    $("[data-jqtitle]").each(function(i,el){ $(this).attr("title", $(this).attr("data-jqtitle")); });
-    $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").click(function() { clearSearchField(); });
-    $(document).keyup(function(e) { if (e.keyCode == 27) { clearSearchField(); } });
-    $("#<?php echo hqt_internalid('delete-search'); ?>").attr("title", $("#<?php echo hqt_internalid('delete-search'); ?>").attr("title")+" [ESC]");
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
     $("#<?php echo hqt_internalid('profiler-apps'); ?>").html(
         $("#<?php echo hqt_internalid('profiler-apps'); ?>").html()
@@ -1040,15 +1037,16 @@ $(function() {
     if (_profilerString && _profilerString=='off') { $("#<?php echo hqt_internalid('hqt-profiler'); ?>").hide(); }
     <?php endif; ?>
 <?php endif; ?>
+    $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").click(function() { clearSearchField(true); });
+    $(document).keyup(function(e) { if (e.keyCode == 27) { clearSearchField(true); } });
+    $("#<?php echo hqt_internalid('delete-search'); ?>").attr("title", $("#<?php echo hqt_internalid('delete-search'); ?>").attr("title")+" [ESC]");
     var searchField = {};
     searchField.input = $("#<?php echo hqt_internalid('search-field'); ?>");
     searchField.performSearch = function() {
-        $("#<?php echo hqt_internalid('icon-search'); ?>").removeClass("hidden");
-        $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").addClass("hidden");
-        $("#<?php echo hqt_internalid('wrapper'); ?>").removeHighlight();
+        clearSearchField();
         var phrase = searchField.input.val().replace(/^\s+|\s+$/g, ""), count=0, matches, phrase_regex;
         phrase = phrase.replace(/\s+/g, "|");
-        if (phrase.length == 0) { clearSearchField(); return; }
+        if (phrase.length == 0) { clearSearchField(true); return; }
         if (phrase.length < 3) { return; }
         $("#<?php echo hqt_internalid('icon-search'); ?>").addClass("hidden");
         $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").removeClass("hidden");
