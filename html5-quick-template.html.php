@@ -755,6 +755,9 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     .secondary-content         { border-top: 1px dotted #dddddd; }
     footer                     { margin-top: 1em; padding-top: 4px; border-top: 1px dotted #dddddd; font-size: .86em; }
 }
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    select:focus, textarea:focus, input:focus { font-size: 16px; }
+}
 </style>
 <?php echo hqt_safestringifarray($metas, hqt_setting('mask_meta')); ?>
 <?php echo hqt_safestringifarray($stylesheets, hqt_setting('mask_stylesheet')); ?>
