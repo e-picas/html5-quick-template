@@ -622,6 +622,7 @@ function hqt_make_list($items, $callback = null, $options = array()) {
  * To allow "left-to-right" languages to use the template, you MUST use the following variables
  * instead of raw "left" or "right" when necessary: `$hqt_direction_left` and `$hqt_direction_right`.
  * Any language string MUST be get using `hqt_translate()`.
+ * Any HTML tag can contain a `data-jq-XXX` attribute to load its value as original `XXX` attribute if jQuery is loaded.
  */
 
 // env preparation
@@ -764,7 +765,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
 <body data-offset="70" class="no-js">
     <!--[if lt IE 7]>
     <div class="alert alert-warning alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <button type="button" class="close hidden-no-js" data-dismiss="alert" aria-hidden="true">&times;</button>
         <strong><?php echo hqt_translate('warning'); ?></strong> <?php echo hqt_translate('outdated_browser_info'); ?>
     </div>
     <![endif]-->
@@ -792,7 +793,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
                     <li><a href="#<?php echo hqt_internalid('notes'); ?>" title="<?php echo hqt_translate('notes_menu_item_title'); ?>"><i class="fa fa-thumb-tack"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('notes_menu_item');; ?></span></a></li>
 <?php endif; ?>
 <?php if (@in_array('top', hqt_setting('navbar_items'))) : ?>
-                    <li><a href="#<?php echo hqt_internalid('top'); ?>" title="<?php echo hqt_translate('top_menu_item_title'); ?>"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('top_menu_item'); ?></span></a></li>
+                    <li class="hidden-no-js"><a href="#<?php echo hqt_internalid('top'); ?>" title="<?php echo hqt_translate('top_menu_item_title'); ?>"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('top_menu_item'); ?></span></a></li>
 <?php endif; ?>
 <?php if (@in_array('bottom', hqt_setting('navbar_items'))) : ?>
                     <li><a href="#<?php echo hqt_internalid('bottom'); ?>" title="<?php echo hqt_translate('bottom_menu_item_title'); ?>"><i class="fa fa-angle-down"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('bottom_menu_item'); ?></span></a></li>
@@ -840,7 +841,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     <?php foreach ($secondary_contents as $i => $_item) : $id = hqt_slugify($i); ?>
             <div class="secondary-content bg-default">
                 <p class="text-muted handler">
-                    <a class="no-hash" data-toggle="collapse" href="#<?php echo hqt_internalid('secondary-content-'.$id); ?>" onClick="$(this).find('i').toggleClass('fa-angle-up').toggleClass('fa-angle-down');" data-jqtitle="<?php echo hqt_translate('secondary_block_handler_title'); ?>">
+                    <a class="no-hash" data-toggle="collapse" href="javascript:showHide('<?php echo hqt_internalid('secondary-content-'.$id); ?>');" data-jq-href="#<?php echo hqt_internalid('secondary-content-'.$id); ?>" onClick="$(this).find('i').toggleClass('fa-angle-up').toggleClass('fa-angle-down');" title="<?php echo hqt_translate('secondary_block_handler_title'); ?>">
                         <i class="fa fa-angle-up"></i>&nbsp;<?php echo ($id != (string) $i) ? hqt_stringify($i) : hqt_translate('show_hide'); ?>
                     </a>
                 </p>
@@ -921,14 +922,19 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     <?php endif; ?>
                     <?php echo hqt_translate('footer_info_app', array(HQT_HOME, HQT_NAME.' '.HQT_VERSION, HQT_NAME)); ?><br><?php echo hqt_translate('footer_info_dependencies'); ?>
                 </div>
-<?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
-                <div id="<?php echo hqt_internalid('hqt-profiler'); ?>" class="pull-<?php echo $hqt_direction_left; ?> responsive hidden-print">
+                <div class="pull-<?php echo $hqt_direction_left; ?> responsive hidden-print">
                     <div class="clearfix visible-xs"><br /></div>
-                    <div class="profiler">
+                    <div>
                         <ul class="nav nav-pills">
-                            <li class="handler"><a class="no-hash" data-toggle="collapse" href="#<?php echo hqt_internalid('profiler'); ?>" data-jqtitle="<?php echo hqt_translate('profiler_button_title'); ?>"><i class="fa fa-cogs"></i>&nbsp;<?php echo hqt_translate('profiler_button'); ?></a></li>
+<?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
+                            <li class="handler"><a id="<?php echo hqt_internalid('profiler-handler'); ?>" class="no-hash profiler-component" data-toggle="collapse" href="javascript:showHide('<?php echo hqt_internalid('profiler'); ?>');" data-jq-title="<?php echo hqt_translate('profiler_button_title'); ?>" data-jq-href="#<?php echo hqt_internalid('profiler'); ?>"><i class="fa fa-cogs"></i>&nbsp;<?php echo hqt_translate('profiler_button'); ?></a></li>
+<?php endif; ?>
+<?php if (@in_array('top', hqt_setting('navbar_items'))) : ?>
+                            <li class="handler hidden"><a href="#<?php echo hqt_internalid('top'); ?>" title="<?php echo hqt_translate('top_menu_item_title'); ?>"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('top_menu_item'); ?></span></a></li>
+<?php endif; ?>
                         </ul>
-                        <div id="<?php echo hqt_internalid('profiler'); ?>" class="collapse">
+<?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
+                        <div id="<?php echo hqt_internalid('profiler'); ?>" class="profiler-component collapse" style="display: none;" data-jq-style=""><small class="hidden">[<a href="javascript:showHide('<?php echo hqt_internalid('profiler'); ?>');">close</a>]</small>
                             <dl class="dl-horizontal">
                                 <dt><?php echo hqt_translate('profiler_request'); ?></dt><dd><a id="<?php echo hqt_internalid('profiler-request'); ?>" class="insert-request"></a></dd>
                                 <dt><?php echo hqt_translate('profiler_apps'); ?></dt><dd id="<?php echo hqt_internalid('profiler-apps'); ?>"><?php echo HQT_NAME.' '.HQT_VERSION; ?></dd>
@@ -943,9 +949,9 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     <?php endif; ?>
                             </dl>
                         </div>
+<?php endif; ?>
                     </div>
                 </div>
-<?php endif; ?>
                 <div class="clearfix"></div>
             </div>
         </footer>
@@ -965,6 +971,9 @@ document.getElementById("<?php echo hqt_internalid('profiler-user-agent'); ?>").
 document.getElementById("<?php echo hqt_internalid('profiler-request'); ?>").innerHTML    = document.location.href;
 <?php endif; ?>
 document.getElementById("<?php echo hqt_internalid('printer-request'); ?>").innerHTML     = document.location.href;
+function showHide(elementid){
+    if (!window.jQuery) { document.getElementById(elementid).style.display = (document.getElementById(elementid).style.display == 'none' ? '' : 'none'); document.location.hash = elementid; }
+}
 function getScriptVersion(script_id) {
     var script = $("#"+script_id), script_src = script.attr("src"), script_href = script.attr("href"),
         matcher = new RegExp(/\d+(?:\.\d+)+/g), vers = null;
@@ -1031,10 +1040,10 @@ $(function() {
     );
     var _profilerString = _query.substr(_query.indexOf("profiler=")).split("&")[0].split("=")[1];
     <?php if ($hqt_profiler_mode=='hidden') : ?>
-    if (_profilerString==undefined || _profilerString!='on') { $("#<?php echo hqt_internalid('hqt-profiler'); ?>").hide(); }
+    if (_profilerString==undefined || _profilerString!='on') { $(".profiler-component").hide(); }
     <?php endif; ?>
     <?php if (in_array($hqt_profiler_mode, array('on','hidden'))) : ?>
-    if (_profilerString && _profilerString=='off') { $("#<?php echo hqt_internalid('hqt-profiler'); ?>").hide(); }
+    if (_profilerString && _profilerString=='off') { $(".profiler-component").hide(); }
     <?php endif; ?>
 <?php endif; ?>
     $("#<?php echo hqt_internalid('delete-search'); ?>, #<?php echo hqt_internalid('delete-search-alt'); ?>").click(function() { clearSearchField(true); });
