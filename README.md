@@ -69,3 +69,11 @@ This (*small*) work is authored and maintained by [@pierowbmstr](http://github.c
 and licensed under an [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html). To
 propose modifications or tell about a bug, please create a ticket or a fork of the sources
 repository at <http://github.com/pierowbmstr/html5-quick-template>.
+
+This work is built with the help of the following third-parties:
+
+-   [jQuery](http://jquery.com/) under [MIT license](http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt)
+-   [Bootstrap](http://getbootstrap.com/) under [Apache license v2.0](http://www.apache.org/licenses/LICENSE-2.0)
+-   [Font Awesome](http://fortawesome.github.io/Font-Awesome) under [SIL OFL 1.1 license](http://scripts.sil.org/OFL)
+-   [HTML5shiv](http://code.google.com/p/html5shiv/) under [MIT license](http://www.opensource.org/licenses/mit-license.php)
+-   [Respond.js](https://github.com/scottjehl/Respond) under [MIT license](http://www.opensource.org/licenses/mit-license.php)

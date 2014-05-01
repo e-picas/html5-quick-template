@@ -254,6 +254,29 @@ $hqt_default_settings = array(
     'libstylesheet_fontawesome' => "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css",
     // @array       language_strings    Overloading of default language strings (see `$hqt_language_strings`)
     'language_strings' => array(),
+    // @string      app_name        title of the "about" window
+    'app_name' => function() { return HQT_NAME.' '.HQT_VERSION; },
+    // @string      app_description     description of the "about" window
+    'app_description' => function() { return 'A simple blank HTML5 template for quick rendering.'; },
+    // @array       app_infos       table of infos for the "about" window
+    'app_infos' => function() { return array(
+            'license' => '<a href="http://www.apache.org/licenses/LICENSE-2.0.html" title="See online">Apache v2.0 open source license</a>',
+            'maintainer' => '<a href="http://github.com/pierowbmstr" title="See online">@pierowbmstr</a>',
+            'sources &amp; updates' => '<a href="'.HQT_HOME.'" title="See online">'.HQT_HOME.'</a>',
+            'documentation' => '<a href="'.hqt_setting('app_manual_url').'" title="See online">'.hqt_setting('app_manual_url').'</a>',
+    ); },
+    // @array       app_dependencies       table of infos for the "third-parties" of the "about" window, each like array( 'name'=>..., 'home'=>..., 'license'=>..., 'license_url'=>... )
+    'app_dependencies' => function() { return array(
+        array('name'=>'jQuery', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
+        array('name'=>'Bootstrap', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
+        array('name'=>'Font Awesome', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
+        array('name'=>'HTML5shiv', 'home'=>'http://code.google.com/p/html5shiv/', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
+        array('name'=>'Respond.js', 'home'=>'http://github.com/scottjehl/Respond', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
+    ); },
+    // @string      app_about_notice        a notice string for the about box
+    'app_about_notice' => function() { return 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>.'; },
+    // @string      app_manual_url          the URL to read the HTML5 quick template manual (URL to this file itself)
+    'app_manual_url' => function() { return (substr(HQT_VERSION, -3)=='dev' ? HQT_HOME.'/tree/wip' : 'http://sites.ateliers-pierrot.fr/html5-quick-template/html5-quick-template.html.php'); },
 );
 
 ################# END OF SETTINGS ######################################################################################
@@ -270,15 +293,21 @@ $hqt_default_settings = array(
  * using the same key as below.
  */
 $hqt_language_strings = array(
+    'about_button' => 'About',
+    'about_button_title' => 'open the about box',
+    'about_box_title' => 'About the app',
     'author_info' => 'Content authored by %s.&nbsp;',
     'bottom_menu_item' => 'Bottom',
     'bottom_menu_item_title' => 'reach the bottom of this page',
     'brand_button_title' => '(re)fresh this page',
+    'close_this_modal_box' => 'close this box',
     'footer_info_app' => 'Page generated from an <a href="%s" title="%s">%s</a>.',
     'footer_info_dependencies' => 'Page built with the help of open source stuff such as <a href="http://jquery.com/" title="jquery.com">jQuery</a>, <a href="http://getbootstrap.com/" title="getbootstrap.com">Bootstrap</a> and <a href="http://fortawesome.github.io/Font-Awesome" title="fortawesome.github.io/Font-Awesome">Font Awesome</a>.',
     'footer_print_info' => 'Together, have a responsible approach: do not print this page unless necessary.<br>This page comes from the Internet at',
     'internet_connection_off' => 'Your internet connection seems off, the page will be rendered as raw HTML.',
     'last_update_info' => 'Last update of this content at %s.&nbsp;',
+    'manual_button' => 'Manual',
+    'manual_button_title' => 'read the app manual online',
     'navigation_menu_title' => 'navigation menu',
     'notes_block_header' => 'Footnotes',
     'notes_menu_item' => 'Footnotes',
@@ -612,6 +641,33 @@ function hqt_make_list($items, $callback = null, $options = array()) {
     return $str;
 }
 
+/**
+ * Get the "about" modal box content
+ *
+ * @setting app_name
+ * @setting app_description
+ * @setting app_infos
+ * @setting app_dependencies
+ * @setting app_about_notice
+ * @return string
+ */
+function hqt_about() {
+    $app_name = hqt_setting('app_name');
+    $app_description = hqt_setting('app_description');
+    $app_infos = hqt_setting('app_infos');
+    $app_dependencies = hqt_setting('app_dependencies');
+    $app_about_notice = hqt_setting('app_about_notice');
+    $str = '<div class="jumbotron"><h1 class="text-center">'.hqt_safestring($app_name).'</h1>'.(!empty($app_description) ? '<p class="text-center">'.hqt_safestring($app_description).'</p>' : '').'<dl class="dl-horizontal">';
+    if (is_array($app_infos)) { foreach ($app_infos as $name=>$val) { $str .= '<dt>'.hqt_safestring($name).'</dt><dd>'.hqt_safestring($val).'</dd>'; } }
+    if (is_array($app_dependencies)) {
+        $str .= '<dt>third-parties</dt><dd><ul class="list-unstyled">';
+        foreach ($app_dependencies as $dep) { $str .= '<li>'.(isset($dep['home']) ? '<a href="'.hqt_safestring($dep['home']).'" title="See online: '.hqt_safestring($dep['home']).'">' : '').hqt_safestring($dep['name']).(isset($dep['home']) ? '</a>' : '').(isset($dep['license']) ? ' ('.(isset($dep['license_url']) ? '<a href="'.hqt_safestring($dep['license_url']).'" title="See online">' : '').hqt_safestring($dep['license']).(isset($dep['license_url']) ? '</a>' : '').')' : '').'</li>'; }
+        $str .= '</ul></dd>';
+    }
+    $str .= '</dl>'.(!empty($app_about_notice) ? '<small>'.hqt_safestring($app_about_notice).'</small>' : '').'</div>';
+    return $str;
+}
+
 ################# END OF INTERNAL API ##################################################################################
 
 ################# FINAL RENDERING ######################################################################################
@@ -635,7 +691,7 @@ if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) 
     $hqt_is_manual = true;
     @ini_set('html_errors', 1);
     ob_start();
-    echo '<p class="lead">To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>.</p>';
+    echo '<p class="lead">To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>. For a full credits info, please see <a href="javascript:showHide(\'hqt-about\');" class="no-hash" data-toggle="modal" data-target="#'.hqt_internalid('messagebox').'">the About box</a>.</p>';
     echo '<h2 id="links">Manuals</h2>';
     echo '<p>The following manuals may be useful using the template:</p><ul><li><a href="http://www.php.net/docs.php">the PHP manual</a></li><li><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/">the HTML Living Standard</a></li></ul>';
     echo '<p>Use one of the links below to access the third-party libraries documentations:</p><ul><li><a href="http://api.jquery.com/">jQuery API</a></li><li><a href="http://getbootstrap.com/css/">Bootstrap 3 documentation</a></li><li><a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icons</a></li></ul>';
@@ -722,6 +778,8 @@ span.search-icon, span.search-icon-alt                { position: absolute; disp
 .dropdown-menu li li > a        { display: block; padding: 3px 6px; clear: both; font-weight: normal; line-height: 1.428571429; color: #333333; white-space: nowrap; }
 .dropdown-menu li li > a:hover,
 .dropdown-menu li li > a:focus  { color: #262626; text-decoration: none; background-color: #f5f5f5; }
+.modal-body .jumbotron          { padding: 16px !important; margin: 0 !important; border-radius: 6px; }
+.modal-body .jumbotron h1       { font-size: 2em; margin-top: 10px; }
 body.no-js                      { padding-top: 0px; }
 body.no-js .hidden-no-js        { display: none; }
 body.no-js aside, body.no-js nav{ max-width: 100%; }
@@ -730,6 +788,7 @@ body.no-js ul.navbar-nav        { list-style-type: none; display: block; padding
 body.no-js ul.navbar-nav li     { display: inline; padding: 0; }
 body.no-js ul.navbar-nav li.hidden-no-js { display: none; }
 body.no-js ul.navbar-nav a      { text-decoration: none; }
+body.no-js .modal               { border-top: 1px dotted #dddddd; font-size: .86em; }
 @media (min-width: 768px) {
     body:not([class="no-js"]) .navbar-nav > li { float: <?php echo $hqt_direction_left; ?>; }
 }
@@ -747,6 +806,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     .dropdown-menu li li > a        { color: #777777; }
     .dropdown-menu li li > a:hover,
     .dropdown-menu li li > a:focus  { background-color: transparent; }
+    .modal-body                     { padding: 10px; }
     body.no-js aside, body.no-js nav{ max-width: 100%; }
 }
 @media print {
@@ -932,6 +992,12 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
                             <li class="handler"><a id="<?php echo hqt_internalid('profiler-handler'); ?>" class="no-hash profiler-component" data-toggle="collapse" href="javascript:showHide('<?php echo hqt_internalid('profiler'); ?>');" data-jq-title="<?php echo hqt_translate('profiler_button_title'); ?>" data-jq-href="#<?php echo hqt_internalid('profiler'); ?>"><i class="fa fa-cogs"></i>&nbsp;<?php echo hqt_translate('profiler_button'); ?></a></li>
 <?php endif; ?>
+<?php if (!isset($hqt_is_manual) || true!==$hqt_is_manual) : ?>
+                            <li class="handler"><a href="javascript:showHide('<?php echo hqt_internalid('hqt-about'); ?>');" class="no-hash" data-toggle="modal" data-target="#<?php echo hqt_internalid('messagebox'); ?>" data-jq-title="<?php echo hqt_translate('about_button_title'); ?>"><i class="fa fa-info-circle"></i>&nbsp;<?php echo hqt_translate('about_button'); ?></a></li>
+    <?php $app_manual = hqt_setting('app_manual_url'); if (!empty($app_manual)) : ?>
+                            <li class="handler"><a href="<?php echo $app_manual; ?>" title="<?php echo hqt_translate('manual_button_title'); ?>"><i class="fa fa-globe"></i>&nbsp;<?php echo hqt_translate('manual_button'); ?></a></li>
+    <?php endif; ?>
+<?php endif; ?>
 <?php if (@in_array('top', hqt_setting('navbar_items'))) : ?>
                             <li class="handler hidden"><a href="#<?php echo hqt_internalid('top'); ?>" title="<?php echo hqt_translate('top_menu_item_title'); ?>"><i class="fa fa-angle-up"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('top_menu_item'); ?></span></a></li>
 <?php endif; ?>
@@ -964,6 +1030,13 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
     </div>
     <div class="clearfix"></div>
     <a id="<?php echo hqt_internalid('bottom'); ?>"></a>
+    <div id="<?php echo hqt_internalid('messagebox'); ?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="<?php echo hqt_internalid('messageboxLabel'); ?>" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content">
+            <div class="hidden-no-js modal-header"><button type="button" class="close pull-<?php echo $hqt_direction_right; ?>" data-dismiss="modal" aria-hidden="true" title="<?php echo hqt_translate('close_this_modal_box'); ?>">×</button><h4 class="modal-title" id="<?php echo hqt_internalid('messageboxLabel'); ?>"><i class="fa fa-info-circle"></i>&nbsp;<?php echo hqt_translate('about_box_title'); ?></h4></div>
+            <div class="modal-body" id="<?php echo hqt_internalid('hqt-about'); ?>" style="display: none;" data-jq-style=""><small class="hidden">[<a href="javascript:showHide('<?php echo hqt_internalid('hqt-about'); ?>');">close</a>]</small><?php echo hqt_about(); ?></div>
+            <div class="hidden-no-js modal-footer hidden"></div>
+        </div></div>
+    </div>
     <script src="<?php echo hqt_setting('libscript_jquery'); ?>" id="<?php echo hqt_internalid('lib-jquery'); ?>"></script>
     <script src="<?php echo hqt_setting('libscript_bootstrap'); ?>" id="<?php echo hqt_internalid('lib-bootstrap'); ?>"></script>
 <script>
