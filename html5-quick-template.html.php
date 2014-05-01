@@ -186,11 +186,7 @@ $hqt_default_settings = array(
     'header_Content-Type' => 'text/html',
     // @string      header_Last-Modified  the "Last-Modified" header value
     'header_Last-Modified' => function() use (&$update) {
-        return (!empty($update) ? (
-            ($update instanceof DateTime) ? $update->format('D, d M Y H:i:s T') : (
-                is_numeric($update) ? date('D, d M Y H:i:s T', $update) : $update
-            )
-        ) : null);
+        return (!empty($update) ? hqt_datify($update, 'D, d M Y H:i:s T') : null);
     },
     // @array       string_spacify      list of characters replaced by a space when transforming a string
     'string_spacify' => array('-', '_'),
@@ -548,6 +544,22 @@ function hqt_slugify($str, $callback = null) {
 }
 
 /**
+ * Build a readable date-time from a timestamp or a `DateTime` object
+ *
+ * @param   float|DateTime  $str        The date or timestamp to transform
+ * @param   string          $format     The format of date to use
+ * @param   null|callable   $callback   A callback method to finally transform the string
+ * @setting date_format                 Default value for `$format`
+ * @return  string
+ */
+function hqt_datify($str, $format = null, $callback = null) {
+    if (is_null($format)) $format = hqt_setting('date_format');
+    $str = (is_object($str) && ($str instanceof DateTime)) ? $str->format($format) : (is_numeric($str) ? date($format, $str) : hqt_safestring($str));
+    $str = hqt_callback($callback, $str);
+    return $str;
+}
+
+/**
  * Returns a safe string extracted from original
  * 
  * @param    mixed           $what       The original content to extract
@@ -647,8 +659,7 @@ if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) 
     $content = ob_get_contents();
     ob_end_clean();
     $toc = array( 'links', 'vars'=>'Variables', 'opts'=>'Settings', 'languages'=>'Language strings', 'dev'=>'Development' );
-    $update = new DateTime;
-    $update->setTimestamp(filemtime(__FILE__)); 
+    $update = filemtime(__FILE__);
     $title = HQT_NAME.' '.HQT_VERSION;
     $sub_title = 'internal documentation';
     hqt_internal('brand_title', hqt_stringify(HQT_NAME, 'ucwords'));
@@ -896,7 +907,7 @@ body.no-js ul.navbar-nav a      { text-decoration: none; }
         <?php endif; ?>
     <?php endif; ?>
     <?php if (!empty($update)) : ?>
-                <?php echo hqt_translate('last_update_info', array(hqt_safestring($update))); ?>
+                <?php echo hqt_translate('last_update_info', array(hqt_datify($update))); ?>
     <?php endif; ?>
             </p></footer>
 <?php endif; ?>

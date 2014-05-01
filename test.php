@@ -41,6 +41,8 @@ $sub_title = 'A lorem ipsum fake content ...';
 
 // page last update
 $update = new DateTime('yesterday');
+// you can also define it as a timestamp
+//$update = filemtime(__FILE__);
 
 // page author
 $author = '@pierowbmstr (http://github.com/pierowbmstr)';
