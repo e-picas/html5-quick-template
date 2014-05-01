@@ -1032,7 +1032,7 @@ body.no-js .modal               { border-top: 1px dotted #dddddd; font-size: .86
     <a id="<?php echo hqt_internalid('bottom'); ?>"></a>
     <div id="<?php echo hqt_internalid('messagebox'); ?>" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="<?php echo hqt_internalid('messageboxLabel'); ?>" aria-hidden="true">
         <div class="modal-dialog"><div class="modal-content">
-            <div class="hidden-no-js modal-header"><button type="button" class="close pull-<?php echo $hqt_direction_right; ?>" data-dismiss="modal" aria-hidden="true" title="<?php echo hqt_translate('close_this_modal_box'); ?>">×</button><h4 class="modal-title" id="<?php echo hqt_internalid('messageboxLabel'); ?>"><i class="fa fa-info-circle"></i>&nbsp;<?php echo hqt_translate('about_box_title'); ?></h4></div>
+            <div class="hidden-no-js modal-header"><button type="button" class="close pull-<?php echo $hqt_direction_right; ?>" data-dismiss="modal" aria-hidden="true" title="<?php echo hqt_translate('close_this_modal_box'); ?>">x</button><h4 class="modal-title" id="<?php echo hqt_internalid('messageboxLabel'); ?>"><i class="fa fa-info-circle"></i>&nbsp;<?php echo hqt_translate('about_box_title'); ?></h4></div>
             <div class="modal-body" id="<?php echo hqt_internalid('hqt-about'); ?>" style="display: none;" data-jq-style=""><small class="hidden">[<a href="javascript:showHide('<?php echo hqt_internalid('hqt-about'); ?>');">close</a>]</small><?php echo hqt_about(); ?></div>
             <div class="hidden-no-js modal-footer hidden"></div>
         </div></div>
