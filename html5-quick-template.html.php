@@ -1,8 +1,8 @@
 <?php
 /**
  * HTML5 Quick Template - A simple blank HTML5 template for quick rendering
- * Sources at <http://github.com/pierowbmstr/html5-quick-template>
- * Copyright 2014 @pierowbmstr <http://github.com/pierowbmstr>
+ * Sources at <http://github.com/piwi/html5-quick-template>
+ * Copyright 2014 @pierowbmstr <http://github.com/piwi>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
  * @package     html5-quick-template
  * @prefix      hqt_|HQT_
  * @license     Apache 2.0
- * @sources     http://github.com/pierowbmstr/html5-quick-template
- * @author      PieroWbmstr <http://github.com/pierowbmstr>
+ * @sources     http://github.com/piwi/html5-quick-template
+ * @author      PieroWbmstr <http://github.com/piwi>
  */
 
 // debug & php settings
@@ -121,7 +121,7 @@ if (!is_array($secondary_contents)) $secondary_contents = (is_string($secondary_
 /**
  * @var    string    The header link to the repo
  */
-if (!isset($stamp_url)) $stamp_url = 'http://github.com/pierowbmstr/html5-quick-template';
+if (!isset($stamp_url)) $stamp_url = 'http://github.com/piwi/html5-quick-template';
 
 /**
  * @var    string    The header link to the repo icon (see <http://fortawesome.github.io/Font-Awesome/icons/#brand>)
@@ -261,7 +261,7 @@ $hqt_default_settings = array(
     // @array       app_infos       table of infos for the "about" window
     'app_infos' => function() { return array(
             'license' => '<a href="http://www.apache.org/licenses/LICENSE-2.0.html" title="See online">Apache v2.0 open source license</a>',
-            'maintainer' => '<a href="http://github.com/pierowbmstr" title="See online">@pierowbmstr</a>',
+            'maintainer' => '<a href="http://github.com/piwi" title="See online">@pierowbmstr</a>',
             'sources &amp; updates' => '<a href="'.HQT_HOME.'" title="See online">'.HQT_HOME.'</a>',
             'documentation' => '<a href="'.hqt_setting('app_manual_url').'" title="See online">'.hqt_setting('app_manual_url').'</a>',
     ); },
@@ -360,7 +360,7 @@ define('HQT_VERSION', '1.2.0-dev');
 /**
  * @constant    URL of the app repo
  */
-define('HQT_HOME', 'http://github.com/pierowbmstr/html5-quick-template');
+define('HQT_HOME', 'http://github.com/piwi/html5-quick-template');
 
 /**
  * Prepare the env vars
