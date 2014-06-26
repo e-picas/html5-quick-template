@@ -65,10 +65,10 @@ You can visualize both lists of definable variables and default settings when br
 
 ## Author, license & contributions
 
-This (*small*) work is authored and maintained by [@pierowbmstr](http://github.com/pierowbmstr)
+This (*small*) work is authored and maintained by [@pierowbmstr](http://github.com/piwi)
 and licensed under an [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html). To
 propose modifications or tell about a bug, please create a ticket or a fork of the sources
-repository at <http://github.com/pierowbmstr/html5-quick-template>.
+repository at <http://github.com/piwi/html5-quick-template>.
 
 This work is built with the help of the following third-parties:
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * This PHP script is a test usage and demonstration page for <http://github.com/pierowbmstr/html5-quick-template>
+ * This PHP script is a test usage and demonstration page for <http://github.com/piwi/html5-quick-template>
  *
  * To make your tests, (un)comment prepared lines of this script and reload the `test.php` file in your browser.
  */
@@ -45,9 +45,9 @@ $update = new DateTime('yesterday');
 //$update = filemtime(__FILE__);
 
 // page author
-$author = '@pierowbmstr (http://github.com/pierowbmstr)';
+$author = '@pierowbmstr (http://github.com/piwi)';
 // you can also define it as an array
-//$author = array('@pierowbmstr (http://github.com/pierowbmstr)', 'other author');
+//$author = array('@pierowbmstr (http://github.com/piwi)', 'other author');
 
 // page content
 $content = <<<eot
