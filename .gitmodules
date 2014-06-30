@@ -1,0 +1,3 @@
+[submodule "cgi-bin/markdown-extended"]
+	path = cgi-bin/markdown-extended
+	url = https://github.com/piwi/markdown-extended.git
