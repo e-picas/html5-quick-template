@@ -63,6 +63,13 @@ at the `LN STRINGS` part in the source file).
 You can visualize both lists of definable variables and default settings when browsing the
 `html5-quick-template.html.php` file directly.
 
+### Usage for Markdown syntax files
+
+A special version of the template is built to handle and render rich HTML (using the template itself)
+for Markdown syntax contents with direct handling by the Apache web-server. See the 
+[`mde-master` branch](https://github.com/piwi/html5-quick-template/tree/mde-master) of the repository
+or use a `xxx-mde` release tag.
+
 ## Author, license & contributions
 
 This (*small*) work is authored and maintained by [@pierowbmstr](http://github.com/piwi)
@@ -77,3 +84,7 @@ This work is built with the help of the following third-parties:
 -   [Font Awesome](http://fortawesome.github.io/Font-Awesome) under [SIL OFL 1.1 license](http://scripts.sil.org/OFL)
 -   [HTML5shiv](http://code.google.com/p/html5shiv/) under [MIT license](http://www.opensource.org/licenses/mit-license.php)
 -   [Respond.js](https://github.com/scottjehl/Respond) under [MIT license](http://www.opensource.org/licenses/mit-license.php)
+
+The Markdown version of the template also uses:
+
+-   [PHP Markdown Extended](https://github.com/piwi/markdown-extended) under [BSD-3-Clause license](http://opensource.org/licenses/BSD-3-Clause)
