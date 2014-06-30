@@ -105,11 +105,11 @@ $notes = '{% NOTES %}';
 $metas = '{% META %}';
 
 // MDE repository
-$stamp_url = 'http://github.com/atelierspierrot/markdown-extended';
+$stamp_url = 'http://github.com/piwi/markdown-extended';
 $stamp_title = 'See the Markdown Extended sources';
 
 // page notice
-$page_notice = 'Content rendered from a <a href="http://github.com/atelierspierrot/markdown-extended" title="github.com/atelierspierrot/markdown-extended">Markdown Extended</a> content&nbsp;&dash;&nbsp;<a href="?plain" title="See plain text version of this content">See raw content</a>';
+$page_notice = 'Content rendered from a <a href="http://github.com/piwi/markdown-extended" title="github.com/piwi/markdown-extended">Markdown Extended</a> content&nbsp;&dash;&nbsp;<a href="?plain" title="See plain text version of this content">See raw content</a>';
 
 // options
 $settings = array();
@@ -133,7 +133,7 @@ $settings['app_description'] = 'The new way of writing for the web';
 $settings['app_infos'] = array(
     'license' => '<a href="http://opensource.org/licenses/BSD-3-Clause" title="See online">BSD-3-Clause open source license</a>',
     'maintainer' => '<a href="http://github.com/pierowbmstr" title="See online">@pierowbmstr</a>',
-    'sources &amp; updates' => '<a href="http://github.com/atelierspierrot/markdown-extended" title="See online">http://github.com/atelierspierrot/markdown-extended</a>',
+    'sources &amp; updates' => '<a href="http://github.com/piwi/markdown-extended" title="See online">http://github.com/piwi/markdown-extended</a>',
     'documentation' => '<a href="http://aboutmde.org/" title="See online">aboutmde.org</a>',
 );
 $settings['app_dependencies'] = array(
@@ -144,7 +144,7 @@ $settings['app_dependencies'] = array(
     array('name'=>'HTML5shiv', 'home'=>'http://code.google.com/p/html5shiv/', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
     array('name'=>'Respond.js', 'home'=>'http://github.com/scottjehl/Respond', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
 );
-$settings['app_about_notice'] = 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="http://github.com/atelierspierrot/markdown-extended" title="See sources on GitHub">atelierspierrot/markdown-extended</a>.';
+$settings['app_about_notice'] = 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="http://github.com/piwi/markdown-extended" title="See sources on GitHub">piwi/markdown-extended</a>.';
 $settings['app_manual_url'] = 'http://aboutmde.org';
 
 // generate HTML template
