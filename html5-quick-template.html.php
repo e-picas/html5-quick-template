@@ -252,6 +252,10 @@ $hqt_default_settings = array(
     'libstylesheet_bootstrap' => "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css",
     // @string      libstylesheet_fontawesome     Font Awesome 4.0.3 <http://fortawesome.github.io/Font-Awesome>
     'libstylesheet_fontawesome' => "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css",
+    // @string      libscript_html5shiv    html5shiv.js 3.7.0 <http://code.google.com/p/html5shiv/>
+    'libscript_html5shiv' => "https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js",
+    // @string      libscript_respond    Respond.js 1.4.2 <http://code.google.com/p/html5shiv/>
+    'libscript_respond' => "https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js",
     // @array       language_strings    Overloading of default language strings (see `$hqt_language_strings`)
     'language_strings' => array(),
     // @string      app_name        title of the "about" window
@@ -738,8 +742,8 @@ $hqt_direction_right    = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
     <link href="<?php echo hqt_setting('libstylesheet_bootstrap'); ?>" rel="stylesheet">
     <link href="<?php echo hqt_setting('libstylesheet_fontawesome'); ?>" rel="stylesheet" id="<?php echo hqt_internalid('lib-fontawesome'); ?>">
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <script src="<?php echo hqt_setting('libscript_html5shiv'); ?>"></script>
+      <script src="<?php echo hqt_setting('libscript_respond'); ?>"></script>
     <![endif]-->
 <?php $brand_title = hqt_safestring(hqt_setting('brand_title')); if (!empty($brand_title)) : ?>
     <title><?php echo $brand_title; ?></title>
