@@ -132,17 +132,17 @@ $settings['app_name'] = $mde_version;
 $settings['app_description'] = 'The new way of writing for the web';
 $settings['app_infos'] = array(
     'license' => '<a href="http://opensource.org/licenses/BSD-3-Clause" title="See online">BSD-3-Clause open source license</a>',
-    'maintainer' => '<a href="http://github.com/pierowbmstr" title="See online">@pierowbmstr</a>',
+    'maintainer' => '<a href="http://github.com/piwi" title="See online">@pierowbmstr</a>',
     'sources &amp; updates' => '<a href="http://github.com/piwi/markdown-extended" title="See online">http://github.com/piwi/markdown-extended</a>',
     'documentation' => '<a href="http://aboutmde.org/" title="See online">aboutmde.org</a>',
 );
 $settings['app_dependencies'] = array(
-    array('name'=>'html5 quick template', 'home'=>'http://github.com/pierowbmstr/html5-quick-template', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
-    array('name'=>'jQuery', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
-    array('name'=>'Bootstrap', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
-    array('name'=>'Font Awesome', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
-    array('name'=>'HTML5shiv', 'home'=>'http://code.google.com/p/html5shiv/', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
-    array('name'=>'Respond.js', 'home'=>'http://github.com/scottjehl/Respond', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
+    array('name'=>'html5 quick template', 'version'=>'1.2.0', 'home'=>'http://github.com/pierowbmstr/html5-quick-template', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
+    array('name'=>'jQuery', 'version'=>'1.11.0', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
+    array('name'=>'Bootstrap', 'version'=>'3.1.1', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
+    array('name'=>'Font Awesome', 'version'=>'4.0.3', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
+    array('name'=>'HTML5shiv', 'version'=>'3.7.0', 'home'=>'http://code.google.com/p/html5shiv/', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
+    array('name'=>'Respond.js', 'version'=>'1.4.2', 'home'=>'http://github.com/scottjehl/Respond', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
 );
 $settings['app_about_notice'] = 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="http://github.com/piwi/markdown-extended" title="See sources on GitHub">piwi/markdown-extended</a>.';
 $settings['app_manual_url'] = 'http://aboutmde.org';
