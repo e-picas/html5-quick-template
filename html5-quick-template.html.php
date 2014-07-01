@@ -271,11 +271,11 @@ $hqt_default_settings = array(
     ); },
     // @array       app_dependencies       table of infos for the "third-parties" of the "about" window, each like array( 'name'=>..., 'home'=>..., 'license'=>..., 'license_url'=>... )
     'app_dependencies' => function() { return array(
-        array('name'=>'jQuery', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
-        array('name'=>'Bootstrap', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
-        array('name'=>'Font Awesome', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
-        array('name'=>'HTML5shiv', 'home'=>'http://code.google.com/p/html5shiv/', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
-        array('name'=>'Respond.js', 'home'=>'http://github.com/scottjehl/Respond', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
+        array('name'=>'jQuery', 'version'=>'1.11.0', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
+        array('name'=>'Bootstrap', 'version'=>'3.1.1', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
+        array('name'=>'Font Awesome', 'version'=>'4.0.3', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
+        array('name'=>'HTML5shiv', 'version'=>'3.7.0', 'home'=>'http://code.google.com/p/html5shiv/', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
+        array('name'=>'Respond.js', 'version'=>'1.4.2', 'home'=>'http://github.com/scottjehl/Respond', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
     ); },
     // @string      app_about_notice        a notice string for the about box
     'app_about_notice' => function() { return 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>.'; },
@@ -665,7 +665,7 @@ function hqt_about() {
     if (is_array($app_infos)) { foreach ($app_infos as $name=>$val) { $str .= '<dt>'.hqt_safestring($name).'</dt><dd>'.hqt_safestring($val).'</dd>'; } }
     if (is_array($app_dependencies)) {
         $str .= '<dt>third-parties</dt><dd><ul class="list-unstyled">';
-        foreach ($app_dependencies as $dep) { $str .= '<li>'.(isset($dep['home']) ? '<a href="'.hqt_safestring($dep['home']).'" title="See online: '.hqt_safestring($dep['home']).'">' : '').hqt_safestring($dep['name']).(isset($dep['home']) ? '</a>' : '').(isset($dep['license']) ? ' ('.(isset($dep['license_url']) ? '<a href="'.hqt_safestring($dep['license_url']).'" title="See online">' : '').hqt_safestring($dep['license']).(isset($dep['license_url']) ? '</a>' : '').')' : '').'</li>'; }
+        foreach ($app_dependencies as $dep) { $str .= '<li>'.(isset($dep['home']) ? '<a href="'.hqt_safestring($dep['home']).'" title="See online: '.hqt_safestring($dep['home']).'">' : '').hqt_safestring($dep['name']).(isset($dep['home']) ? '</a>' : '').(isset($dep['license']) || isset($dep['version']) ? ' ('.(isset($dep['version']) ? 'v. <em>'.hqt_safestring($dep['version']).'</em>' : '').(isset($dep['license']) && isset($dep['version']) ? ' - ' : '').(isset($dep['license']) ? (isset($dep['license_url']) ? '<a href="'.hqt_safestring($dep['license_url']).'" title="See online">' : '').hqt_safestring($dep['license']).(isset($dep['license_url']) ? '</a>' : ''): '').')' : '').'</li>'; }
         $str .= '</ul></dd>';
     }
     $str .= '</dl>'.(!empty($app_about_notice) ? '<small>'.hqt_safestring($app_about_notice).'</small>' : '').'</div>';
