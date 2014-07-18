@@ -111,6 +111,9 @@ $stamp_title = 'See the Markdown Extended sources';
 // page notice
 $page_notice = 'Content rendered from a <a href="http://github.com/piwi/markdown-extended" title="github.com/piwi/markdown-extended">Markdown Extended</a> content&nbsp;&dash;&nbsp;<a href="?plain" title="See plain text version of this content">See raw content</a>';
 
+// MathJax.js
+$scripts = array('http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML');
+
 // options
 $settings = array();
 $settings['app_mode'] = 'dev';
