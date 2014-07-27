@@ -704,6 +704,7 @@ if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) 
     $vars = get_defined_vars();
     foreach (array('GLOBALS', '_POST', '_GET', '_COOKIE', '_FILES', '_ENV', '_REQUEST', '_SERVER', 'php_errormsg') as $key) { if (array_key_exists($key, $vars)) unset($vars[$key]); }
     foreach ($vars as $k=>$v) { if (substr($k, 0, 3)=='hqt') unset($vars[$k]); }
+    foreach ($vars as $k=>$v) { if (substr($k, 0, 5)=='HTTP_') unset($vars[$k]); }
     ksort($vars, SORT_STRING); var_dump($vars);
     echo '</pre><h2 id="opts">Default settings</h2><p>Dump of the default template settings you can overwrite in a personal <code>$settings</code> array.</p><pre>';
     ksort($hqt_default_settings, SORT_STRING); var_dump($hqt_default_settings);
