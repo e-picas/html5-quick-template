@@ -139,6 +139,11 @@ if (!isset($stamp_icon)) $stamp_icon = 'fa-github';
 if (!isset($stamp_title)) $stamp_title = 'Fork the repo on GitHub';
 
 /**
+ * @var    string    The URL for refreshing the page
+ */
+if (!isset($self)) $self = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : '');
+
+/**
  * @var    array     The user settings overwriting the `$default_settings`
  */
 if (!isset($settings) || !is_array($settings)) $settings = array();
@@ -850,7 +855,7 @@ body.no-js .modal               { border-top: 1px dotted #dddddd; font-size: .86
                 <button id="<?php echo hqt_internalid('main-navbar-handler'); ?>" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" title="<?php echo hqt_translate('navigation_menu_title'); ?>">
                     <span class="sr-only"><?php echo hqt_translate('toggle_navigation'); ?></span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="<?php echo isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : (isset($_SERVER['PHP_SELF']) ? $_SERVER['PHP_SELF'] : ''); ?>" title="<?php echo hqt_translate('brand_button_title'); ?>">
+                <a class="navbar-brand" href="<?php echo $self; ?>" title="<?php echo hqt_translate('brand_button_title'); ?>">
                     <?php $icon = hqt_setting('brand_icon'); if (!empty($icon)) : ?>
                         <?php echo is_array($icon) ? $icon[array_rand($icon)] : $icon;?>&nbsp;
                     <?php endif; ?>
