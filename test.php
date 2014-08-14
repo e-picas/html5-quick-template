@@ -248,12 +248,15 @@ $title = $sub_title = $update = $author = $content = $toc = $notes = $secondary_
 //*/
 
 // uncomment this block to test a constant menu in the navbar
-//*
+/*
 $menu = array(
     array('url'=>'http://test.com/', 'title'=>'Test menu item', 'content'=>'Test 1'),
     array('url'=>'http://test.com/', 'title'=>'Test menu item', 'content'=>'Test 2'),
 );
 //*/
+
+// uncomment this line to test a 'self' custom URL for page refresh
+//$self = 'http://test.com/';
 
 // inclusion of the template
 require $html5_quick_template;
