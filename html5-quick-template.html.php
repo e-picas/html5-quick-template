@@ -103,6 +103,11 @@ if (!isset($css)) $css = '';
 if (!isset($js)) $js = '';
 
 /**
+ * @var    array    An array of constant menu items ; each item must be `url=..., title=..., content=...`
+ */
+if (!isset($menu)) $menu = array();
+
+/**
  * @var    string    A notice for the content (information string such as copyright, written last)
  */
 if (!isset($content_notice)) $content_notice = '';
@@ -217,8 +222,8 @@ $hqt_default_settings = array(
     // @string      mask_list_item_content  mask used to build the content of each list item
     //                                      all `mask_list_item_content(...)` masks are completed with `$key` and `$value`
     'mask_list_item_content' =>  '%2$s',
-    // @array       navbar_items        list of navbar allowed items in ( toc , notes , top , bottom , summary )
-    'navbar_items' => array('toc', 'notes', 'top', 'bottom', 'summary'),
+    // @array       navbar_items        list of navbar allowed items in ( menu , toc , notes , top , bottom , summary )
+    'navbar_items' => array('menu', 'toc', 'notes', 'top', 'bottom', 'summary'),
     // @string      mask_list_toc       mask used to build global table of contents list
     'mask_list_toc' => '<ul>%s</ul>',
     // @string      mask_list_item_toc  mask used to build each table of contents list item
@@ -853,6 +858,13 @@ body.no-js .modal               { border-top: 1px dotted #dddddd; font-size: .86
                 </a>
             </div>
             <div id="<?php echo hqt_internalid('main-navbar'); ?>" class="navbar-collapse collapse">
+<?php if (!empty($menu) && @in_array('menu', hqt_setting('navbar_items'))) : ?>
+                <ul class="nav navbar-nav navbar-<?php echo $hqt_direction_left; ?>">
+    <?php foreach ($menu as $menu_item) : ?>
+                    <li><a href="<?php if (isset($menu_item['url'])) echo $menu_item['url']; ?>" title="<?php if (isset($menu_item['title'])) echo hqt_translate($menu_item['title']); ?>"><?php if (isset($menu_item['content'])) echo hqt_translate($menu_item['content']); ?></a></li>
+    <?php endforeach; ?>
+                </ul>
+<?php endif; ?>
                 <ul class="nav navbar-nav navbar-<?php echo $hqt_direction_right; ?>">
 <?php if (!empty($toc) && @in_array('toc', hqt_setting('navbar_items'))) : ?>
                     <li><a href="#<?php echo hqt_internalid('toc'); ?>" title="<?php echo hqt_translate('toc_menu_item_title'); ?>"><i class="fa fa-book"></i><span class="hidden-sm">&nbsp;<?php echo hqt_translate('toc_menu_item');; ?></span></a></li>
