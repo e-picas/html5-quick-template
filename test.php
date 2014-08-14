@@ -247,6 +247,14 @@ $test_val = null;
 $title = $sub_title = $update = $author = $content = $toc = $notes = $secondary_contents = $metas = $stylesheets = $scripts = $css = $js = $content_notice = $page_notice = $test_val;
 //*/
 
+// uncomment this block to test a constant menu in the navbar
+//*
+$menu = array(
+    array('url'=>'http://test.com/', 'title'=>'Test menu item', 'content'=>'Test 1'),
+    array('url'=>'http://test.com/', 'title'=>'Test menu item', 'content'=>'Test 2'),
+);
+//*/
+
 // inclusion of the template
 require $html5_quick_template;
 
