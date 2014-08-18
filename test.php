@@ -255,6 +255,18 @@ $menu = array(
 );
 //*/
 
+// uncomment this block to test a constant menu in the navbar including sub-menu
+//*
+$menu = array(
+    array('url'=>'http://test.com/', 'title'=>'Test menu item', 'content'=>'Test 1'),
+    array('url'=>'http://test.com/', 'title'=>'Test menu item', 'content'=>'Test 2',
+    'items'=>array(
+        array('url'=>'http://test.com/', 'title'=>'Test sub-menu item', 'content'=>'Test 1'),
+        array('url'=>'http://test.com/', 'title'=>'Test sub-menu item', 'content'=>'Test 2'),
+    )),
+);
+//*/
+
 // uncomment this line to test a 'self' custom URL for page refresh
 //$self = 'http://test.com/';
 
