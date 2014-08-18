@@ -140,7 +140,7 @@ $settings['app_infos'] = array(
     'documentation' => '<a href="http://aboutmde.org/" title="See online">aboutmde.org</a>',
 );
 $settings['app_dependencies'] = array(
-    array('name'=>'html5 quick template', 'version'=>'1.2.2', 'home'=>'http://github.com/pierowbmstr/html5-quick-template', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
+    array('name'=>'html5 quick template', 'version'=>'1.2.4', 'home'=>'http://github.com/pierowbmstr/html5-quick-template', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
     array('name'=>'jQuery', 'version'=>'1.11.0', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
     array('name'=>'Bootstrap', 'version'=>'3.1.1', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
     array('name'=>'Font Awesome', 'version'=>'4.0.3', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
