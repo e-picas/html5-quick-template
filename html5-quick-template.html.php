@@ -866,7 +866,18 @@ body.no-js .modal               { border-top: 1px dotted #dddddd; font-size: .86
 <?php if (!empty($menu) && @in_array('menu', hqt_setting('navbar_items'))) : ?>
                 <ul class="nav navbar-nav navbar-<?php echo $hqt_direction_left; ?>">
     <?php foreach ($menu as $menu_item) : ?>
+        <?php if (isset($menu_item['items']) && !empty($menu_item['items'])) : ?>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="<?php if (isset($menu_item['title'])) echo hqt_translate($menu_item['title']); ?>"><?php if (isset($menu_item['content'])) echo hqt_translate($menu_item['content']); ?> <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+            <?php foreach ($menu_item['items'] as $menu_sub_item) : ?>
+                            <li><a href="<?php if (isset($menu_sub_item['url'])) echo $menu_sub_item['url']; ?>" title="<?php if (isset($menu_sub_item['title'])) echo hqt_translate($menu_sub_item['title']); ?>"><?php if (isset($menu_item['content'])) echo hqt_translate($menu_sub_item['content']); ?></a></li>
+            <?php endforeach; ?>
+                        </ul>
+                    </li>
+        <?php else: ?>
                     <li><a href="<?php if (isset($menu_item['url'])) echo $menu_item['url']; ?>" title="<?php if (isset($menu_item['title'])) echo hqt_translate($menu_item['title']); ?>"><?php if (isset($menu_item['content'])) echo hqt_translate($menu_item['content']); ?></a></li>
+        <?php endif; ?>
     <?php endforeach; ?>
                 </ul>
 <?php endif; ?>
