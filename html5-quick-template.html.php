@@ -254,6 +254,8 @@ $hqt_default_settings = array(
     'brand_title' => function() use (&$title) { return hqt_safestring($title); },
     // @string      brand_icon      brand icon (here as an array with a random selection for each rendering ;)
     'brand_icon' => array( '<i class="fa fa-umbrella"></i>', '<i class="fa fa-anchor"></i>', '<i class="fa fa-beer"></i>', '<i class="fa fa-cloud"></i>', '<i class="fa fa-bug"></i>', '<i class="fa fa-leaf"></i>' ),
+    // @string      meta_title     build the meta "title" from the page title
+    'meta_title' => function() use (&$title) { return strip_tags(hqt_safestring($title)); },
     // @string      libscript_jquery       jQuery 1.11.0 <http://jquery.com/>
     'libscript_jquery' => "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js",
     // @string      libscript_bootstrap    Bootstrap 3.1.1 <http://getbootstrap.com/>
@@ -756,8 +758,11 @@ $hqt_direction_right    = (hqt_setting('direction')==='rtl' ? 'left' : 'right');
       <script src="<?php echo hqt_setting('libscript_html5shiv'); ?>"></script>
       <script src="<?php echo hqt_setting('libscript_respond'); ?>"></script>
     <![endif]-->
-<?php $brand_title = hqt_safestring(hqt_setting('brand_title')); if (!empty($brand_title)) : ?>
-    <title><?php echo $brand_title; ?></title>
+<?php
+$meta_title = hqt_safestring(hqt_setting('meta_title'));
+if (empty($meta_title)) $meta_title = hqt_safestring(hqt_setting('brand_title'));
+if (!empty($meta_title)) : ?>
+    <title><?php echo $meta_title; ?></title>
 <?php endif; ?>
 <?php if (!empty($sub_title)) : ?>
     <meta name="description" content="<?php echo hqt_safestring($sub_title); ?>">
