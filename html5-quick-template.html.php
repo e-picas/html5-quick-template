@@ -293,6 +293,16 @@ $hqt_default_settings = array(
     'app_about_notice' => function() { return 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>.'; },
     // @string      app_manual_url          the URL to read the HTML5 quick template manual (URL to this file itself)
     'app_manual_url' => function() { return (substr(HQT_VERSION, -3)=='dev' ? HQT_HOME.'/tree/wip' : 'http://sites.ateliers-pierrot.fr/html5-quick-template/html5-quick-template.html.php'); },
+    // @array       profiler_stack          table of profiler entries
+    'profiler_stack' => array(
+        'profiler-request' => function() {
+            return '<a id="' . hqt_internalid('profiler-request') . '" class="insert-request"></a>';
+        },
+        'profiler_apps' => function() { return HQT_NAME.' '.HQT_VERSION; },
+        'profiler_date' => date('c') . ' (' . @date_default_timezone_get() . ')',
+        'profiler-user-agent' => '',
+        'profiler_server_os' => php_uname(),
+    )
 );
 
 ################# END OF SETTINGS ######################################################################################
@@ -331,10 +341,10 @@ $hqt_language_strings = array(
     'outdated_browser_info' => 'You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.',
     'profiler_button' => 'Profiler',
     'profiler_button_title' => 'show / hide the profiler',
-    'profiler_request' => 'request',
+    'profiler-request' => 'request',
     'profiler_apps' => 'apps',
     'profiler_date' => 'date',
-    'profiler_user_agent' => 'browser / device',
+    'profiler-user-agent' => 'browser / device',
     'profiler_server_os' => 'server OS',
     'results' => 'results',
     'search_field_placeholder' => 'search ...',
@@ -1043,11 +1053,12 @@ body.no-js .modal               { border-top: 1px dotted #dddddd; font-size: .86
 <?php if (in_array($hqt_profiler_mode, array('on', 'hidden'))) : ?>
                         <div id="<?php echo hqt_internalid('profiler'); ?>" class="profiler-component collapse" style="display: none;" data-jq-style=""><small class="hidden">[<a href="javascript:showHide('<?php echo hqt_internalid('profiler'); ?>');">close</a>]</small>
                             <dl class="dl-horizontal">
-                                <dt><?php echo hqt_translate('profiler_request'); ?></dt><dd><a id="<?php echo hqt_internalid('profiler-request'); ?>" class="insert-request"></a></dd>
-                                <dt><?php echo hqt_translate('profiler_apps'); ?></dt><dd id="<?php echo hqt_internalid('profiler-apps'); ?>"><?php echo HQT_NAME.' '.HQT_VERSION; ?></dd>
-                                <dt><?php echo hqt_translate('profiler_date'); ?></dt><dd id="<?php echo hqt_internalid('profiler-date'); ?>"><?php echo date('c'); ?> (<?php echo @date_default_timezone_get(); ?>)</dd>
-                                <dt><?php echo hqt_translate('profiler_user_agent'); ?></dt><dd id="<?php echo hqt_internalid('profiler-user-agent'); ?>"></dd>
-                                <dt><?php echo hqt_translate('profiler_server_os'); ?></dt><dd id="<?php echo hqt_internalid('profiler-server'); ?>"><?php echo php_uname(); ?></dd>
+    <?php $profiler = hqt_setting('profiler_stack'); if (!empty($profiler)) : if (!is_array($profiler)) $profiler = array($profiler); ?>
+        <?php foreach ($profiler as $var=>$val) : ?>
+            <dt><?php echo hqt_translate($var); ?></dt>
+            <dd id="<?php echo $var; ?>"><?php echo hqt_safestring($val); ?></dd>
+        <?php endforeach; ?>
+    <?php endif; ?>
     <?php $profiler = hqt_setting('profiler_user_stack'); if (!empty($profiler)) : if (!is_array($profiler)) $profiler = array($profiler); ?>
         <?php foreach ($profiler as $var=>$val) : ?>
                                 <dt><?php echo (is_string($var) ? hqt_safestring($var) : ''); ?></dt>

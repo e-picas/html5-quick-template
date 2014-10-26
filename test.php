@@ -234,6 +234,14 @@ $settings['app_mode'] = 'dev';
 $settings['date_format'] = 'D-M-Y';
 $settings['brand_icon'] = '<i class="fa fa-html5"></i>';
 $settings['navbar_items'] = array('toc', 'top', 'bottom', 'summary');
+$settings['profiler_stack'] = array(
+    'profiler-request' => function() {
+            return '<a id="' . hqt_internalid('profiler-request') . '" class="insert-request"></a>';
+        },
+    'profiler_apps' => function() { return HQT_NAME.' '.HQT_VERSION; },
+    'profiler_date' => date('c') . ' (' . @date_default_timezone_get() . ')',
+    'profiler-user-agent' => '',
+);
 $settings['profiler_user_stack'] = 'test';
 $settings['language_strings'] = array();
 $settings['language_strings']['notes_block_header'] = 'Content Notes';
