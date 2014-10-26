@@ -140,7 +140,7 @@ $settings['app_infos'] = array(
     'documentation' => '<a href="http://aboutmde.org/" title="See online">aboutmde.org</a>',
 );
 $settings['app_dependencies'] = array(
-    array('name'=>'html5 quick template', 'version'=>'1.2.5', 'home'=>'http://github.com/pierowbmstr/html5-quick-template', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
+    array('name'=>'html5 quick template', 'version'=>'1.2.6', 'home'=>'http://github.com/pierowbmstr/html5-quick-template', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
     array('name'=>'jQuery', 'version'=>'1.11.0', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
     array('name'=>'Bootstrap', 'version'=>'3.1.1', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
     array('name'=>'Font Awesome', 'version'=>'4.0.3', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
@@ -149,6 +149,14 @@ $settings['app_dependencies'] = array(
 );
 $settings['app_about_notice'] = 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="http://github.com/piwi/markdown-extended" title="See sources on GitHub">piwi/markdown-extended</a>.';
 $settings['app_manual_url'] = 'http://aboutmde.org';
+$settings['profiler_stack'] = array(
+    'profiler-request' => function() {
+            return '<a id="' . hqt_internalid('profiler-request') . '" class="insert-request"></a>';
+        },
+    'profiler_apps' => function() { return HQT_NAME.' '.HQT_VERSION; },
+    'profiler_date' => date('c') . ' (' . @date_default_timezone_get() . ')',
+    'profiler-user-agent' => '',
+);
 
 // generate HTML template
 ob_start();
