@@ -4,15 +4,8 @@
 # Sources at <http://github.com/piwi/html5-quick-template/tree/mde-master>
 #
 
-# Markdown files handled by Markdown Extended
-Options +ExecCGI +FollowSymLinks
-AddHandler cgi-script .sh
-AddType text/html .md
-AddHandler MarkDown .md
-Action MarkDown mde_apacheHandler.sh virtual
-
-# special handling when above method doesn't work
-#Options +ExecCGI +FollowSymLinks
-#RewriteEngine On
-#RewriteBase /
-#RewriteRule ^((.*)\.md)$ cgi-bin/Apache-MDE/mde_apacheHandler.php/$1 [P,L,NC,QSA]
+Options         +ExecCGI +FollowSymLinks
+AddHandler      cgi-script  .sh
+AddType         text/html   .md .mde .markd .mdown .markdown
+AddHandler      MarkDown    .md .mde .markd .mdown .markdown
+Action          MarkDown    mde_apacheHandler.sh virtual
