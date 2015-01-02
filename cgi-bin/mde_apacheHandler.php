@@ -2,7 +2,7 @@
 <?php
 #
 # PHP-CGI-script to parse Markdown files with the PHP Markdown Extended class by APACHE direct handling
-# Copyright (c) 2004-2014 Pierre Cassat
+# Copyright (c) 2004-2015 Pierre Cassat
 # Sources at <http://github.com/piwi/html5-quick-template/tree/mde-master>
 #
 

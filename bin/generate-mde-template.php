@@ -2,7 +2,7 @@
 <?php
 #
 # PHP-script to re-generate a MDE special version of the original `html5-quick-template.html.php`
-# Copyright (c) 2004-2014 Pierre Cassat
+# Copyright (c) 2014-2015 Pierre Cassat
 # Sources at <http://github.com/piwi/html5-quick-template/tree/mde-master>
 #
 
@@ -83,6 +83,9 @@ if (!file_exists($mde_console)) {
     error("Markdown Extended console '$mde_console' not found!");
 }
 
+// force the refresher to be empty
+$self = '';
+
 // MDE version
 $mde_version = exec('php '.$mde_console.' -qV');
 
@@ -105,8 +108,8 @@ $notes = '{% NOTES %}';
 $metas = '{% META %}';
 
 // MDE repository
-$stamp_url = 'http://github.com/piwi/markdown-extended';
-$stamp_title = 'See the Markdown Extended sources';
+$stamp_url = 'http://aboutmde.org';
+$stamp_title = 'Learn more about the Markdown Extended syntax';
 
 // page notice
 $page_notice = 'Content rendered from a <a href="http://github.com/piwi/markdown-extended" title="github.com/piwi/markdown-extended">Markdown Extended</a> content&nbsp;&dash;&nbsp;<a href="?plain" title="See plain text version of this content">See raw content</a>';
@@ -117,6 +120,7 @@ $scripts = array('http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AM
 // options
 $settings = array();
 $settings['app_mode'] = 'dev';
+$settings['app_manual_url'] = '';
 $settings['charset'] = '{% CHARSET %}';
 $settings['brand_icon'] = '<i class="fa fa-file-text"></i>';
 $settings['brand_title'] = '{% TITLE %}';
@@ -131,6 +135,7 @@ $settings['language_strings']['notes_block_header'] = '';
 $settings['profiler_user_stack'] = array(
     'MDE' => $mde_version
 );
+/*
 $settings['app_name'] = $mde_version;
 $settings['app_description'] = 'The new way of writing for the web';
 $settings['app_infos'] = array(
@@ -139,22 +144,24 @@ $settings['app_infos'] = array(
     'sources &amp; updates' => '<a href="http://github.com/piwi/markdown-extended" title="See online">http://github.com/piwi/markdown-extended</a>',
     'documentation' => '<a href="http://aboutmde.org/" title="See online">aboutmde.org</a>',
 );
+$settings['app_about_notice'] = 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="http://github.com/piwi/markdown-extended" title="See sources on GitHub">piwi/markdown-extended</a>.';
+$settings['app_manual_url'] = 'http://aboutmde.org';
+*/
 $settings['app_dependencies'] = array(
-    array('name'=>'html5 quick template', 'version'=>'1.2.6', 'home'=>'http://github.com/pierowbmstr/html5-quick-template', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
+//    array('name'=>'html5 quick template', 'version'=>'1.2.6', 'home'=>'http://github.com/piwi/html5-quick-template', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
+    array('name'=>'PHP-MarkdownExtended', 'version'=>$mde_version, 'home'=>'http://github.com/piwi/markdown-extended', 'license'=>'Apache 2.0 license', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0.html'),
     array('name'=>'jQuery', 'version'=>'1.11.0', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
     array('name'=>'Bootstrap', 'version'=>'3.1.1', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
     array('name'=>'Font Awesome', 'version'=>'4.0.3', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
     array('name'=>'HTML5shiv', 'version'=>'3.7.0', 'home'=>'http://code.google.com/p/html5shiv/', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
     array('name'=>'Respond.js', 'version'=>'1.4.2', 'home'=>'http://github.com/scottjehl/Respond', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
 );
-$settings['app_about_notice'] = 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="http://github.com/piwi/markdown-extended" title="See sources on GitHub">piwi/markdown-extended</a>.';
-$settings['app_manual_url'] = 'http://aboutmde.org';
 $settings['profiler_stack'] = array(
     'profiler-request' => function() {
             return '<a id="' . hqt_internalid('profiler-request') . '" class="insert-request"></a>';
         },
     'profiler_apps' => function() { return HQT_NAME.' '.HQT_VERSION; },
-    'profiler_date' => date('c') . ' (' . @date_default_timezone_get() . ')',
+//    'profiler_date' => date('c') . ' (' . @date_default_timezone_get() . ')',
     'profiler-user-agent' => '',
 );
 
