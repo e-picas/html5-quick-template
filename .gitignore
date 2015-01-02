@@ -2,4 +2,4 @@
 *tmp*
 
 # only for the 'mde-master' branch
-cgi-bin/*
+#cgi-bin/*
