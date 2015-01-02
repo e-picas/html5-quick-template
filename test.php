@@ -1,8 +1,10 @@
 <?php
 /**
- * This PHP script is a test usage and demonstration page for <http://github.com/piwi/html5-quick-template>
+ * This PHP script is a test usage and demonstration page 
+ * for <http://github.com/piwi/html5-quick-template>
  *
- * To make your tests, (un)comment prepared lines of this script and reload the `test.php` file in your browser.
+ * To make your tests, (un)comment prepared lines of this script and 
+ * reload the `test.php` file in your browser.
  */
 
 // PHP settings not required for template usage

@@ -2,7 +2,7 @@
 /**
  * HTML5 Quick Template - A simple blank HTML5 template for quick rendering
  * Sources at <http://github.com/piwi/html5-quick-template>
- * Copyright 2014 @pierowbmstr <http://github.com/piwi>
+ * Copyright (c) 2014-2015 Pierre Cassat <http://e-piwi.fr/>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
  * @prefix      hqt_|HQT_
  * @license     Apache 2.0
  * @sources     http://github.com/piwi/html5-quick-template
- * @author      PieroWbmstr <http://github.com/piwi>
+ * @author      Pierre Cassat <http://e-piwi.fr/>
  */
 
 // debug & php settings
