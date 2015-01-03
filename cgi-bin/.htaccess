@@ -1,11 +1,20 @@
 #
 # Apache host config to parse Markdown files with the PHP Markdown Extended class by direct handling
-# Copyright (c) 2004-2015 Pierre Cassat
-# Sources at <http://github.com/piwi/html5-quick-template/tree/mde-master>
+# Sources at <http://github.com/piwi/mde-cgi>
 #
 
+# special config for the MDE-HTML5-quick-template
+SetEnv          MDE_TEMPLATE    mde-html5-quick-template.html
+
+# enable CGIs and follow symbolic links
 Options         +ExecCGI +FollowSymLinks
+
+# add 'sh' scripts as CGI-scripts
 AddHandler      cgi-script  .sh
+
+# display '.md' files as text if something went wrong (you can add any extensions)
 AddType         text/html   .md .mde .markd .mdown .markdown
-AddHandler      MarkDown    .md .mde .markd .mdown .markdown
-Action          MarkDown    mde_apacheHandler.sh virtual
+
+# treat '.md' files by the CGI handler
+AddHandler      mde         .md .mde .markd .mdown .markdown
+Action          mde         mde-cgi-handler.sh virtual
