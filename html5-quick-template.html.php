@@ -256,14 +256,14 @@ $hqt_default_settings = array(
     'brand_icon' => array( '<i class="fa fa-umbrella"></i>', '<i class="fa fa-anchor"></i>', '<i class="fa fa-beer"></i>', '<i class="fa fa-cloud"></i>', '<i class="fa fa-bug"></i>', '<i class="fa fa-leaf"></i>' ),
     // @string      meta_title     build the meta "title" from the page title
     'meta_title' => function() use (&$title) { return strip_tags(hqt_safestring($title)); },
-    // @string      libscript_jquery       jQuery 1.11.0 <http://jquery.com/>
-    'libscript_jquery' => "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js",
-    // @string      libscript_bootstrap    Bootstrap 3.1.1 <http://getbootstrap.com/>
-    'libscript_bootstrap' => "//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js",
-    // @string      libstylesheet_bootstrap Bootstrap 3.1.1 <http://getbootstrap.com/>
-    'libstylesheet_bootstrap' => "//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css",
-    // @string      libstylesheet_fontawesome     Font Awesome 4.0.3 <http://fortawesome.github.io/Font-Awesome>
-    'libstylesheet_fontawesome' => "//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css",
+    // @string      libscript_jquery       jQuery 1.11.2 <http://jquery.com/>
+    'libscript_jquery' => "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js",
+    // @string      libscript_bootstrap    Bootstrap 3.3.2 <http://getbootstrap.com/>
+    'libscript_bootstrap' => "//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js",
+    // @string      libstylesheet_bootstrap Bootstrap 3.3.2 <http://getbootstrap.com/>
+    'libstylesheet_bootstrap' => "//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css",
+    // @string      libstylesheet_fontawesome     Font Awesome 4.3.0 <http://fortawesome.github.io/Font-Awesome>
+    'libstylesheet_fontawesome' => "//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css",
     // @string      libscript_html5shiv    html5shiv.js 3.7.0 <http://code.google.com/p/html5shiv/>
     'libscript_html5shiv' => "https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js",
     // @string      libscript_respond    Respond.js 1.4.2 <http://code.google.com/p/html5shiv/>
@@ -283,9 +283,9 @@ $hqt_default_settings = array(
     ); },
     // @array       app_dependencies       table of infos for the "third-parties" of the "about" window, each like array( 'name'=>..., 'home'=>..., 'license'=>..., 'license_url'=>... )
     'app_dependencies' => function() { return array(
-        array('name'=>'jQuery', 'version'=>'1.11.0', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
-        array('name'=>'Bootstrap', 'version'=>'3.1.1', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
-        array('name'=>'Font Awesome', 'version'=>'4.0.3', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
+        array('name'=>'jQuery', 'version'=>'1.11.2', 'home'=>'http://jquery.com/', 'license'=>'MIT license', 'license_url'=>'http://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt'),
+        array('name'=>'Bootstrap', 'version'=>'3.3.1', 'home'=>'http://getbootstrap.com/', 'license'=>'Apache license v2.0', 'license_url'=>'http://www.apache.org/licenses/LICENSE-2.0'),
+        array('name'=>'Font Awesome', 'version'=>'4.3.0', 'home'=>'http://fortawesome.github.io/Font-Awesome', 'license'=>'SIL OFL 1.1 license', 'license_url'=>'http://scripts.sil.org/OFL'),
         array('name'=>'HTML5shiv', 'version'=>'3.7.0', 'home'=>'http://code.google.com/p/html5shiv/', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
         array('name'=>'Respond.js', 'version'=>'1.4.2', 'home'=>'http://github.com/scottjehl/Respond', 'license'=>'MIT license', 'license_url'=>'http://www.opensource.org/licenses/mit-license.php'),
     ); },
