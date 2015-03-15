@@ -20,7 +20,7 @@
  * @prefix      hqt_|HQT_
  * @license     Apache 2.0
  * @sources     http://github.com/piwi/html5-quick-template
- * @author      Pierre Cassat <http://e-piwi.fr/>
+ * @author      piwi <me@e-piwi.fr>
  */
 
 // debug & php settings
