@@ -292,7 +292,7 @@ $hqt_default_settings = array(
     // @string      app_about_notice        a notice string for the about box
     'app_about_notice' => function() { return 'To follow sources updates, create a fork of the template or transmit a bug, please have a look at the GitHub repository at <a href="'.HQT_HOME.'" title="See sources on GitHub">'.HQT_HOME.'</a>.'; },
     // @string      app_manual_url          the URL to read the HTML5 quick template manual (URL to this file itself)
-    'app_manual_url' => function() { return (substr(HQT_VERSION, -3)=='dev' ? HQT_HOME.'/tree/wip' : 'http://sites.ateliers-pierrot.fr/html5-quick-template/html5-quick-template.html.php'); },
+    'app_manual_url' => function() { return (substr(HQT_VERSION, -3)=='dev' ? HQT_HOME.'/tree/dev' : 'http://sites.ateliers-pierrot.fr/html5-quick-template/html5-quick-template.html.php'); },
     // @array       profiler_stack          table of profiler entries
     'profiler_stack' => array(
         'profiler-request' => function() {
