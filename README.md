@@ -52,4 +52,3 @@ Apache config
         </Directory> 
 
     </VirtualHost>
-

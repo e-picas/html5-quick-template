@@ -3,13 +3,13 @@
  * HTML5 Quick Template - A simple blank HTML5 template for quick rendering
  * Sources at <http://github.com/piwi/html5-quick-template>
  * Copyright (c) 2014-2015 Pierre Cassat <http://e-piwi.fr/>
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -174,7 +174,7 @@ $hqt_default_settings = array(
     'app_mode' => (isset($hqt_app_mode_shortcut) ? $hqt_app_mode_shortcut : 'prod'),
     // @string      profiler_default_mode   the default profiler mode for 'prod' `app_mode`
     'profiler_default_mode' => 'hidden',
-    // @array       profiler_mode  the actual profiler mode in ( 'on' => profiler, 'off' => no profiler, 'hidden' => profiler hidden in HTML ) 
+    // @array       profiler_mode  the actual profiler mode in ( 'on' => profiler, 'off' => no profiler, 'hidden' => profiler hidden in HTML )
     'profiler_mode' => function() { return (hqt_setting('app_mode')==='dev' ? 'on' : hqt_setting('profiler_default_mode')); },
     // @array       profiler_user_stack  some infos to add to the page's profiler
     'profiler_user_stack' => array(),
@@ -199,7 +199,7 @@ $hqt_default_settings = array(
     // @string      slug_glue           character used to build slugs (replacing special chars and spaces)
     'slug_glue' => '-',
     // @string      slug_mask           mask to catch replaced characters used to build slugs
-    'slug_mask' => '~[^a-zA-Z0-9]+~u',    
+    'slug_mask' => '~[^a-zA-Z0-9]+~u',
     // @numeric     length_extract      length of introduction or extract of contents
     'length_extract' => 180,
     // @numeric     length_title        length of title when constructed from a content
@@ -381,7 +381,7 @@ define('HQT_NAME', 'html5-quick-template');
 /**
  * @constant    Current version of the app
  */
-define('HQT_VERSION', '1.2.7');
+define('HQT_VERSION', '1.2.8');
 
 /**
  * @constant    URL of the app repo
@@ -418,7 +418,7 @@ function hqt_prepare_dom($content) {
 
 /**
  * Get a setting entry
- * 
+ *
  * @param   string  $name       The setting key to get
  * @param   mixed   $default    The default value if setting was not found
  * @return  mixed
@@ -515,7 +515,7 @@ function hqt_getid($name, $set = false) {
 
 /**
  * Returns a safe string passing it in `$mask` with `sprintf()` and to a list of optional callbacks
- * 
+ *
  * @param    mixed          $what        The original content to stringify
  * @param    string         $mask        The mask to use to build the content
  * @param    null|callable  $callback    A callback method to finally transform the string
@@ -544,12 +544,12 @@ function hqt_safestring($what, $mask = null, $callback = null, $items_glue = ' '
         $str .= sprintf($mask, (string) $what);
     }
     $str = hqt_callback($callback, $str);
-    return $str; 
+    return $str;
 }
 
 /**
  * Call the `hqt_safestring` method with `$mask` if `$what` is an array, without `$mask` otherwise
- * 
+ *
  * @param    mixed          $what        The original content to stringify
  * @param    string         $mask        The mask to use to build the content
  * @param    null|callable  $callback    A callback method to finally transform the string
@@ -610,7 +610,7 @@ function hqt_datify($str, $format = null, $callback = null) {
 
 /**
  * Returns a safe string extracted from original
- * 
+ *
  * @param    mixed           $what       The original content to extract
  * @param    int             $length     The length to extract (default is `settings[ length_extract ]`)
  * @param    null|callable   $callback   A callback method to finally transform the string
@@ -627,7 +627,7 @@ function hqt_extract($what, $length = null, $callback = null) {
 
 /**
  * Build a table of contents from an array of items
- * 
+ *
  * @param    array          $items        The list items array like `id => content` or `id => sub-items` recursively
  * @param    null|callable  $callback     A callback method to finally transform the string
  * @param    array          $options      An array of options to override current page settings
@@ -644,7 +644,7 @@ function hqt_make_list($items, $callback = null, $options = array()) {
             'mask_list_item' => hqt_setting('mask_list_item'),
             'mask_list_item_content' => hqt_setting('mask_list_item_content'),
         ), (is_array($options) ? $options : array()));
-        foreach ($items as $var=>$val) { 
+        foreach ($items as $var=>$val) {
             if (!is_string($var) && is_string($val)) { $var = $val; }
             if (is_array($val)) {
                 $str .= sprintf(
@@ -711,7 +711,7 @@ function hqt_about() {
 hqt_prepare($hqt_default_settings, $settings, $hqt_language_strings);
 hqt_prepare_dom($content);
 
-// dump env vars when calling this file 
+// dump env vars when calling this file
 $hqt_arg_mode = (isset($_GET['mode']) ? $_GET['mode'] : null);
 if (basename($_SERVER['PHP_SELF'])==basename(__FILE__) && (empty($hqt_arg_mode) || $hqt_arg_mode!='empty')) {
     $hqt_is_manual = true;
@@ -925,7 +925,7 @@ body.no-js .modal               { border-top: 1px dotted #dddddd; font-size: .86
                                 'mask_list' => hqt_setting('mask_list_toc'),
                                 'mask_list_item' => hqt_setting('mask_list_item_toc'),
                                 'mask_list_item_content' => hqt_setting('mask_list_item_content_toc'),
-                            )); 
+                            ));
                             echo substr($toc_menu, strlen('<ul>'), -(strlen('</ul>')));
                             ?>
         <?php if (!empty($secondary_contents)) : ?>
