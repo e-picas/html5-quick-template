@@ -1,6 +1,6 @@
 #
 # Apache host config to parse Markdown files with the PHP Markdown Extended class by direct handling
-# Sources at <http://github.com/piwi/mde-cgi>
+# Sources at <http://github.com/markdown-extended/mde-cgi>
 #
 
 # special config for the MDE-HTML5-quick-template
