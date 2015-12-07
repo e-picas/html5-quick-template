@@ -2,6 +2,10 @@
 
 * (upcoming release)
 
+* v1.2.8-mde (2015-12-09)
+* v1.2.8 (2015-12-09)
+
+    * 203e46c - update mde-master with new MDE-CGI name (piwi)
     * b3436f2 - allow dropdown menu separators & headers (piwi)
     * 5398a95 - Update of dependencies: (piwi)
 
