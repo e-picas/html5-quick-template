@@ -4,12 +4,12 @@ html5-quick-template - MDE version
 This branch is a version of the original `master` to parse all Markdown syntax files of
 a host as an HTML content and load it in a special version of the original `html5-quick-template`.
 
-Please see the [original master](http://github.com/piwi/html5-quick-template) for more info.
+Please see the [original master](http://github.com/e-picas/html5-quick-template) for more info.
 
 Installation
 ------------
 
-    wget --no-check-certificate -O mde-master.tar.gz https://github.com/piwi/html5-quick-template/archive/mde-master.tar.gz
+    wget --no-check-certificate -O mde-master.tar.gz https://github.com/e-picas/html5-quick-template/archive/mde-master.tar.gz
     tar -xvf mde-master.tar.gz
     cd html5-quick-template-mde-master/cgi-bin
     ln -s "$(pwd)/mde-cgi-handler.sh" {path to your server CGI binaries}/
