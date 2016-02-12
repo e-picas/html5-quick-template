@@ -67,15 +67,15 @@ You can visualize both lists of definable variables and default settings when br
 
 A special version of the template is built to handle and render rich HTML (using the template itself)
 for Markdown syntax contents with direct handling by the Apache web-server. See the 
-[`mde-master` branch](https://github.com/piwi/html5-quick-template/tree/mde-master) of the repository
+[`mde-master` branch](https://github.com/e-picas/html5-quick-template/tree/mde-master) of the repository
 or use a `xxx-mde` release tag.
 
 ## Author, license & contributions
 
-This (*small*) work is authored and maintained by [@pierowbmstr](http://github.com/piwi)
+This (*small*) work is authored and maintained by [@picas](http://picas.fr/)
 and licensed under an [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html). To
 propose modifications or tell about a bug, please create a ticket or a fork of the sources
-repository at <http://github.com/piwi/html5-quick-template>.
+repository at <http://github.com/e-picas/html5-quick-template>.
 
 This work is built with the help of the following third-parties:
 
@@ -87,4 +87,4 @@ This work is built with the help of the following third-parties:
 
 The Markdown version of the template also uses:
 
--   [PHP Markdown Extended](https://github.com/piwi/markdown-extended) under [BSD-3-Clause license](http://opensource.org/licenses/BSD-3-Clause)
+-   [PHP Markdown Extended](https://github.com/e-picas/markdown-extended) under [BSD-3-Clause license](http://opensource.org/licenses/BSD-3-Clause)

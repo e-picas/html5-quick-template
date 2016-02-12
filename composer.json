@@ -1,8 +1,9 @@
 {
-    "name": "piwi/html5-quick-template",
+    "name": "picas/html5-quick-template",
     "description": "A simple blank HTML5 template for quick rendering.",
-    "homepage": "http://github.com/piwi/html5-quick-template",
+    "homepage": "http://github.com/e-picas/html5-quick-template",
     "license": "Apache-2.0",
     "require": { "php": ">=5.3.0" },
+    "replace": { "piwi/html5-quick-template": "*" },
     "bin": [ "html5-quick-template.html.php" ]
 }
